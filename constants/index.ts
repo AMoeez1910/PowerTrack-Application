@@ -25,10 +25,17 @@ import target from "@/assets/icons/target.png";
 import to from "@/assets/icons/to.png";
 import check from "@/assets/images/check.png";
 import signUpCar from "@/assets/images/signupcar.png";
-
+import logo from "@/assets/images/logo.png";  
+import bellIcon from "@/assets/icons/bellIcon.png";
+import logoSmall from "@/assets/images/nobackgroundLogo.png"
+import logoBlack from "@/assets/images/logoBlack.png"
+import settings from "@/assets/icons/gear.png";
 export const images = {
   check,
-  signUpCar
+  signUpCar,
+  logo,
+  logoSmall,
+  logoBlack
 };
 
 export const icons = {
@@ -57,4 +64,6 @@ export const icons = {
   star,
   target,
   to,
+  bellIcon,
+  settings
 };

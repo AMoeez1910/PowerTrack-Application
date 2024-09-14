@@ -4,7 +4,7 @@ import React from "react";
 const getVariantStyle = (variant: ButtonProps["bgVariant"]) => {
   switch (variant) {
     case "secondary":
-      return "bg-black";
+      return "bg-secondary-1000";
     case "danger":
       return "bg-red-500";
     case "success":

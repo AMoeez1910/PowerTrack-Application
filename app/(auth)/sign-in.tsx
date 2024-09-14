@@ -30,7 +30,7 @@ const SignIn = () => {
 
       if (signInAttempt.status === "complete") {
         await setActive({ session: signInAttempt.createdSessionId });
-        router.replace("/");
+        router.replace("/(root)/(tabs)/home");
       } else {
         console.error(JSON.stringify(signInAttempt, null, 2));
       }
@@ -43,42 +43,44 @@ const SignIn = () => {
   }, [isLoaded, form.email, form.password]);
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
-      <ScrollView className="flex-1 bg-white">
-        <View className="relative w-full h-[250px]">
-          <Image source={images.signUpCar} className="h-[250px] w-full z-0" />
-          <Text className="text-2xl font-JakartaBold absolute bottom-5 left-5">
-            Welcome 👋
-          </Text>
-        </View>
-        <View className="p-5">
-          <InputField
-            label="Email"
-            placeholder="Enter your email"
-            icon={icons.email}
-            value={form.email}
-            onChangeText={(text) => setForm({ ...form, email: text })}
+    <SafeAreaView className="bg-primary h-full">
+      <ScrollView>
+        <View className="w-full justify-center h-full px-4 my-4">
+          <Image
+            source={images.logoBlack}
+            className="w-32 h-32"
+            resizeMode="contain"
           />
-          <InputField
-            label="Password"
-            placeholder="Enter your password"
-            icon={icons.lock}
-            value={form.password}
-            secureTextEntry={true}
-            onChangeText={(text) => setForm({ ...form, password: text })}
-          />
-          <CustomButton
-            className="mt-4"
-            bgVariant="secondary"
-            title="Sign In"
-            onPress={onSignInPress}
-            isLoading={isLoading}
-          />
-          <View className="flex flex-row justify-center items-center mt-4">
-            <Text className="text-black">Dont have an account already? </Text>
-            <Link href={"/sign-up"} className="text-[#0286ff]">
-              Sign Up
-            </Link>
+          <Text className="text-2xl font-JakartaBold">Welcome 👋</Text>
+          <View className="py-5">
+            <InputField
+              label="Email"
+              placeholder="Enter your email"
+              icon={icons.email}
+              value={form.email}
+              onChangeText={(text) => setForm({ ...form, email: text })}
+            />
+            <InputField
+              label="Password"
+              placeholder="Enter your password"
+              icon={icons.lock}
+              value={form.password}
+              secureTextEntry={true}
+              onChangeText={(text) => setForm({ ...form, password: text })}
+            />
+            <CustomButton
+              className="mt-4"
+              bgVariant="secondary"
+              title="Sign In"
+              onPress={onSignInPress}
+              isLoading={isLoading}
+            />
+            <View className="flex flex-row justify-center items-center mt-4">
+              <Text className="text-black">Dont have an account already? </Text>
+              <Link href={"/sign-up"} className="text-[#0286ff]">
+                Sign Up
+              </Link>
+            </View>
           </View>
         </View>
       </ScrollView>
