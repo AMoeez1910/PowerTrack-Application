@@ -33,6 +33,7 @@ import logoBlack from "@/assets/images/logoBlack.png"
 import settings from "@/assets/icons/gear.png";
 import fan from "@/assets/images/fan.png";
 import range from "@/assets/images/range.png";
+import circuit from "@/assets/images/circuit.png";
 export const images = {
   check,
   signUpCar,
@@ -41,7 +42,8 @@ export const images = {
   logoBlack,
   car,
   fan,
-  range
+  range,
+  circuit
 };
 
 export const icons = {

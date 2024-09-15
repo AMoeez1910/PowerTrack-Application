@@ -1,12 +1,186 @@
-import { View, Text } from 'react-native'
-import React from 'react'
+import {
+  View,
+  Text,
+  ScrollView,
+  Image,
+  TouchableOpacity,
+  Modal,
+} from "react-native";
+import React, { useState } from "react";
+import CustomBatterySVG from "@/components/BatteryIcon";
+import { batteryProps } from "@/types/type";
+import { carData, warningFix } from "@/lib/data";
+import { Dropdown } from "react-native-element-dropdown";
+import { Circle, Svg } from "react-native-svg";
+import CustomButton from "@/components/CustomButton";
+import ReactNativeModal from "react-native-modal";
+import { images } from "@/constants";
 
-const information = () => {
+const Information = () => {
+  const [modalVisible, setModalVisible] = useState(false);
+  const batteryText = (charge: number) => {
+    if (charge < 20) {
+      return "Battery health is low";
+    } else if (charge < 50) {
+      return "Battery health is moderate";
+    } else if (charge < 80) {
+      return "Battery health is good";
+    } else {
+      return "Battery health is excellent";
+    }
+  };
+  const [selectedBattery, setSelectedBattery] = useState<batteryProps>(
+    carData.battery[0]
+  );
   return (
-    <View>
-      <Text>information</Text>
-    </View>
-  )
-}
+    <ScrollView className="flex-1 bg-primary-100">
+      <View className="flex flex-1 mt-10 px-5">
+        <Text className="text-3xl font-JakartaSemiBold mb-10 ">
+          Technical Details
+        </Text>
+        <View className="flex flex-row justify-between border-b border-[#E0E0E0] pb-3">
+          <View>
+            <Text className="text-xl font-JakartaSemiBold mb-2">
+              Battery Health
+            </Text>
+            <Dropdown
+              containerStyle={{
+                borderRadius: 10,
+                borderColor: "#E0E0E0",
+                padding: 5,
+              }}
+              style={{
+                width: 200,
+                padding: 10,
+                borderRadius: 5,
+                borderColor: "#E0E0E0",
+                borderWidth: 2,
+                marginBottom: 60,
+              }}
+              data={carData.battery}
+              maxHeight={300}
+              placeholder="Select item"
+              value={selectedBattery}
+              onChange={(item) => {
+                setSelectedBattery(item);
+              }}
+              labelField="name"
+              valueField="id"
+            />
+            <Text className="text-xl font-JakartaBold">
+              {batteryText(selectedBattery.charge)}!
+            </Text>
+          </View>
+          <View className="flex">
+            <CustomBatterySVG
+              charge={selectedBattery.charge}
+              width={100}
+              height={150}
+            />
+            <Text className="text-center font-JakartaBold">
+              {selectedBattery.charge}%
+            </Text>
+          </View>
+        </View>
+        <View className="mt-3 pb-3 border-b border-[#E0E0E0]">
+          <Text className="text-xl font-JakartaSemiBold mb-2">
+            Battery Equivalent Values
+          </Text>
+          <View className="flex flex-row items-center ml-2 mb-2">
+            <Svg height="7" width="7" viewBox="0 0 10 10">
+              <Circle cx="5" cy="5" r="5" fill="#1F1F1F" />
+            </Svg>
+            <Text className="text-lg ml-2 font-Jakarta">
+              Double-Layer Capacitance (Cdl):{" "}
+              <Text className="text-lg font-JakartaBold">
+                {selectedBattery.batteryConfig.Cdl}
+                μF
+              </Text>
+            </Text>
+          </View>
+          <View className="flex flex-row items-center ml-2">
+            <Svg height="7 " width="7" viewBox="0 0 10 10">
+              <Circle cx="5" cy="5" r="5" fill="#1F1F1F" />
+            </Svg>
+            <Text className="text-lg ml-2 font-Jakarta mb-2">
+              Charge Transfer Resistance (Rct):{" "}
+              <Text className="text-lg font-JakartaBold">
+                {selectedBattery.batteryConfig.Rct}Ω
+              </Text>
+            </Text>
+          </View>
+          <View className="flex flex-row items-center ml-2">
+            <Svg height="7" width="7" viewBox="0 0 10 10">
+              <Circle cx="5" cy="5" r="5" fill="#1F1F1F" />
+            </Svg>
+            <Text className="text-lg ml-2 font-Jakarta">
+              Internal Resistance (R0):{" "}
+              <Text className="text-lg font-JakartaBold">
+                {selectedBattery.batteryConfig.R0}
+                mΩ
+              </Text>
+            </Text>
+          </View>
+        </View>
+        <View className="mt-3">
+          <Text className="text-xl font-JakartaSemiBold text-red-600 ">
+            Battery Warnings
+          </Text>
+          {selectedBattery.warning?.length === 0 ? (
+            <Text className="text-xl text-center font-JakartaBold py-4">
+              No warnings to show
+            </Text>
+          ) : (
+            selectedBattery.warning?.map((warning, index) => (
+              <View
+                key={index}
+                className="flex flex-row items-center py-1 ml-2"
+              >
+                <Svg height="7" width="7" viewBox="0 0 10 10">
+                  <Circle cx="5" cy="5" r="5" fill="#1F1F1F" />
+                </Svg>
+                <Text className="text-lg ml-2 font-Jakarta">
+                  {warning.message}
+                </Text>
+              </View>
+            ))
+          )}
+        </View>
+        {selectedBattery?.warning?.length > 0 && (
+          <CustomButton
+            title="Fix Battery Warning Issues"
+            bgVariant="danger"
+            onPress={() => {
+              setModalVisible(true);
+            }}
+          />
+        )}
+      </View>
+      <ReactNativeModal
+        isVisible={modalVisible}
+        onBackdropPress={() => {
+          setModalVisible(false);
+        }}
+      >
+        <ScrollView className="bg-white px-7 py-4 rounded-2xl max-h-[600px]">
+          <View className="flex justify-center items-center">
+            <Image source={images.circuit} />
+            <Text>Circuit Diagram {selectedBattery.name}</Text>
+            {selectedBattery?.warning?.map((warning, index) => (
+              <View>
+                <Text className="text-2xl font-JakartaExtraBold mb-2">
+                  {warning.message}:
+                </Text>
+                <Text className="text-sm font-Jakarta mb-5">
+                  {warningFix(warning.message)}
+                </Text>
+              </View>
+            ))}
+          </View>
+        </ScrollView>
+      </ReactNativeModal>
+    </ScrollView>
+  );
+};
 
-export default information
+export default Information;

@@ -1,7 +1,7 @@
 import React from "react";
 import Svg, { Rect, G, Text } from "react-native-svg";
 
-const CustomBatterySVG = ({charge}:{charge:number}) => {
+const CustomBatterySVG = ({charge,width,height}:{charge:number;width:number;height:number}) => {
   const getColor = (charge:number) => {
     if (charge < 20) return "red";
     if (charge < 50) return "#FFCD01";
@@ -9,7 +9,7 @@ const CustomBatterySVG = ({charge}:{charge:number}) => {
   };
 
   return (
-    <Svg height="100" width="60" viewBox="0 0 60 130">
+    <Svg height={height} width={width} viewBox="0 0 60 130">
       {/* Battery Body */}
       <Rect
         x="5"
