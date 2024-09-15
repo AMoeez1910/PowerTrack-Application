@@ -55,7 +55,7 @@ const Information = () => {
                 borderRadius: 5,
                 borderColor: "#E0E0E0",
                 borderWidth: 2,
-                marginBottom: 60,
+                marginBottom: 30,
               }}
               data={carData.battery}
               maxHeight={300}
@@ -67,9 +67,11 @@ const Information = () => {
               labelField="name"
               valueField="id"
             />
-            <Text className="text-xl font-JakartaBold">
-              {batteryText(selectedBattery.charge)}!
-            </Text>
+            <View>
+              <Text className="text-xl font-JakartaBold absolute">
+                {batteryText(selectedBattery.charge)}!
+              </Text>
+            </View>
           </View>
           <View className="flex">
             <CustomBatterySVG
@@ -167,7 +169,7 @@ const Information = () => {
             <Image source={images.circuit} />
             <Text>Circuit Diagram {selectedBattery.name}</Text>
             {selectedBattery?.warning?.map((warning, index) => (
-              <View>
+              <View key={index}>
                 <Text className="text-2xl font-JakartaExtraBold mb-2">
                   {warning.message}:
                 </Text>
