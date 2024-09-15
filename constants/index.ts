@@ -28,14 +28,20 @@ import signUpCar from "@/assets/images/signupcar.png";
 import logo from "@/assets/images/logo.png";  
 import bellIcon from "@/assets/icons/bellIcon.png";
 import logoSmall from "@/assets/images/nobackgroundLogo.png"
+import car from "@/assets/images/car.png";
 import logoBlack from "@/assets/images/logoBlack.png"
 import settings from "@/assets/icons/gear.png";
+import fan from "@/assets/images/fan.png";
+import range from "@/assets/images/range.png";
 export const images = {
   check,
   signUpCar,
   logo,
   logoSmall,
-  logoBlack
+  logoBlack,
+  car,
+  fan,
+  range
 };
 
 export const icons = {

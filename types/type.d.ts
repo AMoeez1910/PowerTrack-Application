@@ -21,3 +21,15 @@ declare interface InputFieldProps extends TextInputProps {
   className?: string;
   clearText?: () => void;
 }
+declare interface batteryProps {
+      id: string,
+      name: string,
+      charge: number,
+      temp: number,
+      range: number,
+}
+declare interface carDataProps {
+   id: string,
+  img: any,
+  battery: batteryProps[]
+}
