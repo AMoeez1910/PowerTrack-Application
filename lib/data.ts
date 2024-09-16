@@ -7,7 +7,7 @@ export const carData: carDataProps = {
   battery: [
     {
       id: "1",
-      name: "battery 1",
+      name: "Battery 1",
       charge: 20,
       batteryConfig: {
         Cdl: 20,
@@ -27,7 +27,7 @@ export const carData: carDataProps = {
     },
     {
       id: "2",
-      name: "battery 2",
+      name: "Battery 2",
       charge: 10,
       batteryConfig: {
         Cdl: Math.floor(Math.random() * 50 + 1), // Random value between 1 and 50
@@ -43,7 +43,7 @@ export const carData: carDataProps = {
     },
     {
       id: "3",
-      name: "battery 3",
+      name: "Battery 3",
       charge: 30,
       batteryConfig: {
         Cdl: Math.floor(Math.random() * 50 + 1),
@@ -63,7 +63,7 @@ export const carData: carDataProps = {
     },
     {
       id: "4",
-      name: "battery 4",
+      name: "Battery 4",
       charge: 80,
       batteryConfig: {
         Cdl: Math.floor(Math.random() * 50 + 1),
@@ -74,7 +74,7 @@ export const carData: carDataProps = {
     },
     {
       id: "5",
-      name: "battery 5",
+      name: "Battery 5",
       charge: 20,
       batteryConfig: {
         Cdl: Math.floor(Math.random() * 50 + 1),
@@ -98,7 +98,7 @@ export const carData: carDataProps = {
     },
     {
       id: "6",
-      name: "battery 6",
+      name: "Battery 6",
       charge: 0,
       batteryConfig: {
         Cdl: Math.floor(Math.random() * 50 + 1),
@@ -114,7 +114,7 @@ export const carData: carDataProps = {
     },
     {
       id: "7",
-      name: "battery 7",
+      name: "Battery 7",
       charge: 90,
       batteryConfig: {
         Cdl: Math.floor(Math.random() * 50 + 1),
@@ -125,7 +125,7 @@ export const carData: carDataProps = {
     },
     {
       id: "8",
-      name: "battery 8",
+      name: "Battery 8",
       charge: 80,
       batteryConfig: {
         Cdl: Math.floor(Math.random() * 50 + 1),
