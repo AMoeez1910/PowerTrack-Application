@@ -59,7 +59,7 @@ const Home = () => {
               setRefresh(false);
               refetch();
             }}
-            className="flex flex-row bg-secondary-700 p-3 absolute left-[47%] rounded-full width-[150px] mt-1"
+            className="flex flex-row bg-secondary-700 p-3 absolute left-[44%] rounded-full width-[150px] mt-1"
           >
             <RotateCcw className="text-white" size={20} />
           </TouchableOpacity>
