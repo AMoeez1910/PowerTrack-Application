@@ -25,23 +25,38 @@ declare type WarningProps = {
   id: string;
   message: string;
 };
+declare interface batteryListI {
+  b1: number;
+  b10: number;
+  b11: number;
+  b12: number;
+  b13: number;
+  b14: number;
+  b15: number;
+  b16: number;
+  b17: number;
+  b2: number;
+  b3: number;
+  b4: number;
+  b5: number;
+  b6: number;
+  b7: number;
+  b8: number;
+  b9: number;
+  range: number;
+  temp: number;
+}
 declare interface batteryProps {
   id: string;
   name: string;
-  charge: number;
-  batteryConfig: {
-    Cdl:number;
-    Rct:number;
-    R0:number;
-  }
-  warning: WarningProps[];
+  cdl: number;
+  health: number;
+  rct: number;
+  re: number;
+  warns: string[];
 }
 declare interface carDataProps {
   id: string;
   img: any;
   battery: batteryProps[];
-  info: {
-    temperature: number;
-    range: number;
-  };
 }

@@ -3,10 +3,9 @@ import {
   Text,
   ScrollView,
   Image,
-  TouchableOpacity,
-  Modal,
+  ActivityIndicator,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import CustomBatterySVG from "@/components/BatteryIcon";
 import { batteryProps } from "@/types/type";
 import { carData, warningFix } from "@/lib/data";
@@ -15,6 +14,7 @@ import { Circle, Svg } from "react-native-svg";
 import CustomButton from "@/components/CustomButton";
 import ReactNativeModal from "react-native-modal";
 import { images } from "@/constants";
+import { useFetch } from "@/lib/fetch";
 
 const Information = () => {
   const [modalVisible, setModalVisible] = useState(false);
@@ -29,13 +29,34 @@ const Information = () => {
       return "Battery health is excellent";
     }
   };
-  const [selectedBattery, setSelectedBattery] = useState<batteryProps>(
-    carData.battery[0]
+  const [selectedBattery, setSelectedBattery] = useState<batteryProps>(carData.battery[0]);
+  const { data, loading } = useFetch(
+    `https://united-whippet-openly.ngrok-free.app/get_dict/${selectedBattery?.id}`
   );
+  const batteryData : batteryProps = (data || {}) as batteryProps;
+  useEffect(()=>{
+    selectedBattery && setSelectedBattery(
+      {
+        ...selectedBattery,
+        cdl: batteryData.cdl,
+        health: batteryData.health,
+        rct: batteryData.rct,
+        re: batteryData.re,
+        warns: batteryData.warns
+      }
+    )
+  },[data])
+  if (loading) {
+    return (
+      <View className="flex h-full justify-center items-center">
+        <ActivityIndicator size="small" color="#000" />
+      </View>
+    );
+  }
   return (
-    <ScrollView className="flex-1 bg-primary-100">
-      <View className="flex flex-1 mt-10 px-5">
-        <Text className="text-3xl font-JakartaSemiBold mb-10 ">
+    <ScrollView className="flex-1 bg-primary-100 ">
+      <View className="flex flex-1 mt-5 px-5 pb-[100px]">
+        <Text className="text-3xl font-JakartaSemiBold mb-5 ">
           Technical Details
         </Text>
         <View className="flex flex-row justify-between border-b border-[#E0E0E0] pb-3">
@@ -69,18 +90,18 @@ const Information = () => {
             />
             <View>
               <Text className="text-xl font-JakartaBold absolute">
-                {batteryText(selectedBattery.charge)}!
+                {batteryText(selectedBattery.health)}!
               </Text>
             </View>
           </View>
           <View className="flex">
             <CustomBatterySVG
-              charge={selectedBattery.charge}
+              charge={selectedBattery.health}
               width={100}
               height={150}
             />
             <Text className="text-center font-JakartaBold">
-              {selectedBattery.charge}%
+              {selectedBattery.health}%
             </Text>
           </View>
         </View>
@@ -95,7 +116,7 @@ const Information = () => {
             <Text className="text-lg ml-2 font-Jakarta">
               Double-Layer Capacitance (Cdl):{" "}
               <Text className="text-lg font-JakartaBold">
-                {selectedBattery.batteryConfig.Cdl}
+                {selectedBattery.cdl}
                 μF
               </Text>
             </Text>
@@ -107,7 +128,7 @@ const Information = () => {
             <Text className="text-lg ml-2 font-Jakarta mb-2">
               Charge Transfer Resistance (Rct):{" "}
               <Text className="text-lg font-JakartaBold">
-                {selectedBattery.batteryConfig.Rct}Ω
+                {selectedBattery.rct}Ω
               </Text>
             </Text>
           </View>
@@ -118,7 +139,7 @@ const Information = () => {
             <Text className="text-lg ml-2 font-Jakarta">
               Internal Resistance (R0):{" "}
               <Text className="text-lg font-JakartaBold">
-                {selectedBattery.batteryConfig.R0}
+                {selectedBattery.re}
                 mΩ
               </Text>
             </Text>
@@ -128,12 +149,12 @@ const Information = () => {
           <Text className="text-xl font-JakartaSemiBold text-red-600 ">
             Battery Warnings
           </Text>
-          {selectedBattery.warning?.length === 0 ? (
+          {selectedBattery.warns?.length === 0 ? (
             <Text className="text-xl text-center font-JakartaBold py-4">
               No warnings to show
             </Text>
           ) : (
-            selectedBattery.warning?.map((warning, index) => (
+            selectedBattery.warns?.map((warning, index) => (
               <View
                 key={index}
                 className="flex flex-row items-center py-1 ml-2"
@@ -141,16 +162,15 @@ const Information = () => {
                 <Svg height="7" width="7" viewBox="0 0 10 10">
                   <Circle cx="5" cy="5" r="5" fill="#1F1F1F" />
                 </Svg>
-                <Text className="text-lg ml-2 font-Jakarta">
-                  {warning.message}
-                </Text>
+                <Text className="text-lg ml-2 font-Jakarta">{warning}</Text>
               </View>
             ))
           )}
         </View>
-        {selectedBattery?.warning?.length > 0 && (
+        {selectedBattery?.warns?.length > 0 && (
           <CustomButton
             title="Fix Battery Warning Issues"
+            className="mt-5"
             bgVariant="danger"
             onPress={() => {
               setModalVisible(true);
@@ -168,16 +188,17 @@ const Information = () => {
           <View className="flex justify-center items-center">
             <Image source={images.circuit} />
             <Text>Circuit Diagram {selectedBattery.name}</Text>
-            {selectedBattery?.warning?.map((warning, index) => (
+            <View className="mt-4">{selectedBattery?.warns?.map((warning, index) => (
               <View key={index}>
                 <Text className="text-2xl font-JakartaExtraBold mb-2">
-                  {warning.message}:
+                  {warning}:
                 </Text>
                 <Text className="text-sm font-Jakarta mb-5">
-                  {warningFix(warning.message)}
+                  {warningFix(warning)}
                 </Text>
               </View>
-            ))}
+            ))}</View>
+            
           </View>
         </ScrollView>
       </ReactNativeModal>

@@ -15,7 +15,6 @@
     "preset": "jest-expo"
   },
   "dependencies": {
-    "@brightlayer-ui/react-native-progress-icons": "^1.0.2",
     "@clerk/clerk-expo": "^2.2.5",
     "@expo/metro-runtime": "~3.2.3",
     "@expo/vector-icons": "^14.0.2",
@@ -31,6 +30,7 @@
     "expo-status-bar": "~1.12.1",
     "expo-system-ui": "~3.0.7",
     "expo-web-browser": "~13.0.3",
+    "lucide-react": "^0.456.0",
     "nativewind": "^2.0.11",
     "react": "18.2.0",
     "react-dom": "18.2.0",
