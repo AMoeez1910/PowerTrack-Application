@@ -88,15 +88,17 @@ const Information = () => {
               labelField="name"
               valueField="id"
             />
-            <View>
+            {
+              selectedBattery.health &&
+              <View>
               <Text className="text-xl font-JakartaBold absolute">
                 {batteryText(selectedBattery.health)}!
               </Text>
-            </View>
+            </View>}
           </View>
           <View className="flex">
             <CustomBatterySVG
-              charge={selectedBattery.health}
+              charge={selectedBattery.health || 0}
               width={100}
               height={150}
             />
@@ -149,7 +151,7 @@ const Information = () => {
           <Text className="text-xl font-JakartaSemiBold text-red-600 ">
             Battery Warnings
           </Text>
-          {selectedBattery.warns?.length === 0 ? (
+          {selectedBattery?.warns?.length === 0 || !selectedBattery.warns ? (
             <Text className="text-xl text-center font-JakartaBold py-4">
               No warnings to show
             </Text>

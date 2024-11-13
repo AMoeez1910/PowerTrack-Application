@@ -14,7 +14,7 @@ import { batteryListI, batteryProps } from "@/types/type";
 import BatteryInfoCard from "@/components/BatteryInfoCard";
 import * as Animatable from "react-native-animatable";
 import { fetchAPI, useFetch } from "@/lib/fetch";
-
+import { RotateCcw } from "lucide-react-native";
 Animatable.initializeRegistryWithDefinitions({
   translateY: {
     from: { translateY: 0 },
@@ -40,10 +40,10 @@ const Home = () => {
       </View>
     );
   }
-  if (!refresh) {
+  if (!refresh && !loading) {
     setTimeout(() => {
       setRefresh(true);
-    }, 10000);
+    }, 5000);
   }
   return (
     <ScrollView
@@ -53,14 +53,17 @@ const Home = () => {
       }
     >
       {refresh && (
-        <TouchableOpacity
-          onPress={() => {
-            setRefresh(false);
-            refetch();
-          }}
-          className="flex flex-row bg-secondary-700 p-3 absolute left-[47%] rounded-full width-[150px]"
-        >
-        </TouchableOpacity>
+        <Animatable.View animation="translateBack">
+          <TouchableOpacity
+            onPress={() => {
+              setRefresh(false);
+              refetch();
+            }}
+            className="flex flex-row bg-secondary-700 p-3 absolute left-[47%] rounded-full width-[150px] mt-1"
+          >
+            <RotateCcw className="text-white" size={20} />
+          </TouchableOpacity>
+        </Animatable.View>
       )}
       <View className="flex flex-1 mt-16 justify-center items-center">
         <Image source={images.car} resizeMode="contain" />
