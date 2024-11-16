@@ -32,7 +32,7 @@ const Layout = () => {
     <>
       <ProfileHeader />
       <Tabs
-        initialRouteName="index"
+        initialRouteName="home"
         screenOptions={{
           tabBarActiveTintColor: "white",
           tabBarInactiveTintColor: "white",
