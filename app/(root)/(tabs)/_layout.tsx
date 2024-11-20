@@ -15,7 +15,7 @@ const TabIcon = ({
     className={`flex flex-row justify-center items-center rounded-full ${focused ? " bg-secondary-1000" : ""}`}
   >
     <View
-      className={`rounded-full w-12 h-12 items-center justify-center ${focused ? "bg-secondary-700" : ""}`}
+      className={`rounded-full w-12 h-12 items-center justify-center mb-6 ${focused ? "bg-secondary-700" : ""}`}
     >
       <Image
         source={source}
