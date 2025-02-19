@@ -61,7 +61,7 @@ const Information = () => {
         </Text>
         <View className="flex flex-row justify-between border-b border-[#E0E0E0] pb-3">
           <View>
-            <Text className="text-xl font-JakartaSemiBold mb-2">
+            <Text className="text-lg font-JakartaSemiBold mb-2">
               Battery Health
             </Text>
             <Dropdown
@@ -88,13 +88,13 @@ const Information = () => {
               labelField="name"
               valueField="id"
             />
-            {
-              selectedBattery.health &&
+            {selectedBattery.health && (
               <View>
-              <Text className="text-xl font-JakartaBold absolute">
-                {batteryText(selectedBattery.health)}!
-              </Text>
-            </View>}
+                <Text className="text-xl font-JakartaBold absolute">
+                  {batteryText(selectedBattery.health)}!
+                </Text>
+              </View>
+            )}
           </View>
           <View className="flex">
             <CustomBatterySVG
@@ -190,17 +190,18 @@ const Information = () => {
           <View className="flex justify-center items-center">
             <Image source={images.circuit} />
             <Text>Circuit Diagram {selectedBattery.name}</Text>
-            <View className="mt-4">{selectedBattery?.warns?.map((warning, index) => (
-              <View key={index}>
-                <Text className="text-2xl font-JakartaExtraBold mb-2">
-                  {warning}:
-                </Text>
-                <Text className="text-sm font-Jakarta mb-5">
-                  {warningFix(warning)}
-                </Text>
-              </View>
-            ))}</View>
-            
+            <View className="mt-4">
+              {selectedBattery?.warns?.map((warning, index) => (
+                <View key={index}>
+                  <Text className="text-2xl font-JakartaExtraBold mb-2">
+                    {warning}:
+                  </Text>
+                  <Text className="text-sm font-Jakarta mb-5">
+                    {warningFix(warning)}
+                  </Text>
+                </View>
+              ))}
+            </View>
           </View>
         </ScrollView>
       </ReactNativeModal>

@@ -3,26 +3,31 @@ import React from "react";
 import { Tabs } from "expo-router";
 import { icons } from "@/constants";
 import ProfileHeader from "@/components/ProfileHeader";
+import { Battery } from "lucide-react-native";
 
 const TabIcon = ({
   source,
   focused,
 }: {
-  source: ImageSourcePropType;
+  source: ImageSourcePropType | React.JSX.Element;
   focused: boolean;
 }) => (
   <View
-    className={`flex flex-row justify-center items-center rounded-full ${focused ? " bg-secondary-1000" : ""}`}
+    className={`flex flex-row justify-center items-center rounded-full  mb-6 ${focused ? " bg-secondary-1000" : ""}`}
   >
     <View
-      className={`rounded-full w-12 h-12 items-center justify-center mb-6 ${focused ? "bg-secondary-700" : ""}`}
+      className={`rounded-full w-12 h-12 items-center justify-center ${focused ? "bg-secondary-700" : ""}`}
     >
-      <Image
-        source={source}
-        tintColor="white"
-        resizeMode="contain"
-        className="w-7 h-7"
-      />
+      {React.isValidElement(source) ? (
+        <View className="flex items-center justify-center h-full w-full">{source}</View>
+      ) : (
+        <Image
+          source={source as ImageSourcePropType}
+          tintColor="white"
+          resizeMode="contain"
+          className="w-7 h-7"
+        />
+      )}
     </View>
   </View>
 );
@@ -70,6 +75,25 @@ const Layout = () => {
             headerShown: false,
             tabBarIcon: ({ focused }) => (
               <TabIcon source={icons.list} focused={focused} />
+            ),
+          }}
+        />
+        <Tabs.Screen
+          name="battery"
+          options={{
+            title: "Battery",
+            headerShown: false,
+            tabBarIcon: ({ focused }) => (
+              <TabIcon
+                source={
+                  <Battery
+                    size={35}
+                    className=" text-white"
+                    strokeWidth={2.5}
+                  />
+                }
+                focused={focused}
+              />
             ),
           }}
         />

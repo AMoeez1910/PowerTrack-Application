@@ -7,7 +7,7 @@ import {
   ActivityIndicator,
   RefreshControl,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { images } from "@/constants";
 import CustomBatterySVG from "@/components/BatteryIcon";
 import { batteryListI, batteryProps } from "@/types/type";
@@ -16,6 +16,7 @@ import * as Animatable from "react-native-animatable";
 import { fetchAPI, useFetch } from "@/lib/fetch";
 import { RotateCcw } from "lucide-react-native";
 import * as Progress from "react-native-progress";
+import { router } from "expo-router";
 
 Animatable.initializeRegistryWithDefinitions({
   translateY: {
@@ -47,6 +48,13 @@ const Home = () => {
       setRefresh(true);
     }, 5000);
   }
+  useEffect(() => {
+    if (getEisProgress >= 1) {
+      setGetEis(false);
+      setGetEisProgress(0);
+      router.push("/information");
+    }
+  }, [getEisProgress]);
   return (
     <ScrollView
       className="bg-primary-100"
@@ -55,17 +63,19 @@ const Home = () => {
       }
     >
       {refresh && !loading && (
-        <Animatable.View animation="translateBack">
-          <TouchableOpacity
-            onPress={() => {
-              setRefresh(false);
-              refetch();
-            }}
-            className="flex flex-row bg-secondary-700 p-3 absolute left-[44%] rounded-full width-[150px] mt-1"
-          >
-            <RotateCcw className="text-white" size={20} />
-          </TouchableOpacity>
-        </Animatable.View>
+        <View>
+          <Animatable.View animation="translateBack" useNativeDriver>
+            <TouchableOpacity
+              onPress={() => {
+                setRefresh(false);
+                refetch();
+              }}
+              className="flex flex-row bg-secondary-700 p-3 absolute left-[44%] rounded-full width-[150px] mt-1"
+            >
+              <RotateCcw className="text-white" size={20} />
+            </TouchableOpacity>
+          </Animatable.View>
+        </View>
       )}
       <View className="flex flex-1 mt-16 justify-center items-center h-full">
         <Image
@@ -141,19 +151,18 @@ const Home = () => {
             onPress={() => {
               setGetEis(true);
             }}
-            className={` bg-secondary-700 rounded-xl p-4 ${getEis ? " opacity-0" : "opacity-100"} transition-all duration-100 ease-in-out`}
+            className={` bg-secondary-700 rounded-xl p-4 ${getEis ? "hidden" : "visible"}`}
           >
             <Text className="text-center font-JakartaBold text-white text-md">
               Get Eis Progress
             </Text>
           </TouchableOpacity>
           <View
-            className={`absolute top-4 left-4 ${getEis ? "opacity-100" : "opacity-0"}`}
+            className={`absolute top-4 left-4 ${getEis ? "visible" : " hidden"}`}
           >
             <Progress.Bar
               progress={getEisProgress}
               width={500}
-              animated={true}
               className="mx-auto max-w-full"
               color="#666666"
             />
