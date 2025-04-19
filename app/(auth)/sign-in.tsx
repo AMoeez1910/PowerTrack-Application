@@ -39,7 +39,6 @@ const SignIn = () => {
     } finally {
       setIsLoading(false);
     }
-    //eslint-disable-next-line
   }, [isLoaded, form.email, form.password]);
 
   return (

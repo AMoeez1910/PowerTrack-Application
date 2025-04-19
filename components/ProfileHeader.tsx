@@ -3,8 +3,10 @@ import React from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { icons, images } from "@/constants";
 import { router } from "expo-router";
+import { useUser } from "@clerk/clerk-expo";
 
 const ProfileHeader = () => {
+  const {user} = useUser();
   return (
     <SafeAreaView className="bg-secondary-1000 h-20 py-2">
       <View className="flex flex-row justify-between w-full px-5 ">
@@ -25,13 +27,13 @@ const ProfileHeader = () => {
           resizeMode="contain"
         />
         <TouchableOpacity
-            onPress={() => {
-                router.replace("/(root)/profile");
-            }}
+          onPress={() => {
+            router.replace("/(root)/profile");
+          }}
         >
           <Image
-            source={icons.profile}
-            className="w-7 h-7"
+            source={user?.imageUrl ? { uri: user?.imageUrl } : icons.profile}
+            className="w-7 h-7 rounded-full"
             resizeMode="contain"
           />
         </TouchableOpacity>

@@ -6,7 +6,7 @@ const Battery = () => {
     <ScrollView className="flex-1 bg-primary-100 h-[100vh] ">
       <View className="flex flex-1 mt-5 px-5 pb-[100px] h-full">
         <Text className="text-3xl font-JakartaSemiBold mb-5 ">
-          Technical Details
+          Battery Analysis
         </Text>
         <View className=" pb-3">
           <Text className="text-lg font-JakartaSemiBold mb-2">

@@ -146,7 +146,7 @@ const Home = () => {
             </View>
           </>
         )}
-        <View className="w-full px-4 mt-6 relative">
+        {/* <View className="w-full px-4 mt-6 relative">
           <TouchableOpacity
             onPress={() => {
               setGetEis(true);
@@ -167,7 +167,7 @@ const Home = () => {
               color="#666666"
             />
           </View>
-        </View>
+        </View> */}
       </View>
     </ScrollView>
   );
