@@ -1,10 +1,4 @@
-import {
-  View,
-  Text,
-  ScrollView,
-  Image,
-  ActivityIndicator,
-} from "react-native";
+import { View, Text, ScrollView, Image, ActivityIndicator } from "react-native";
 import React, { useEffect, useState } from "react";
 import CustomBatterySVG from "@/components/BatteryIcon";
 import { batteryProps } from "@/types/type";
@@ -29,23 +23,24 @@ const Information = () => {
       return "Battery health is excellent";
     }
   };
-  const [selectedBattery, setSelectedBattery] = useState<batteryProps>(carData.battery[0]);
-  const { data, loading } = useFetch(
-    `https://united-whippet-openly.ngrok-free.app/get_dict/${selectedBattery?.id}`
+  const [selectedBattery, setSelectedBattery] = useState<batteryProps>(
+    carData.battery[0]
   );
-  const batteryData : batteryProps = (data || {}) as batteryProps;
-  useEffect(()=>{
-    selectedBattery && setSelectedBattery(
-      {
+  const { data, loading } = useFetch(
+    `https://serv-5dla.onrender.com/get_dict/${selectedBattery?.id}`
+  );
+  const batteryData: batteryProps = (data || {}) as batteryProps;
+  useEffect(() => {
+    selectedBattery &&
+      setSelectedBattery({
         ...selectedBattery,
         cdl: batteryData.cdl,
         health: batteryData.health,
         rct: batteryData.rct,
         re: batteryData.re,
-        warns: batteryData.warns
-      }
-    )
-  },[data])
+        warns: batteryData.warns,
+      });
+  }, [data]);
   if (loading) {
     return (
       <View className="flex h-full justify-center items-center">

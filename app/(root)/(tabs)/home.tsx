@@ -35,7 +35,7 @@ const Home = () => {
   const [getEisProgress, setGetEisProgress] = useState(0);
   const [refresh, setRefresh] = useState(false);
   const { data, loading, refetch } = useFetch(
-    "https://united-whippet-openly.ngrok-free.app/get_dict/0"
+    "https://serv-5dla.onrender.com/get_dict/0"
   );
   const carData: batteryListI = (data || {}) as batteryListI;
   if (getEis) {
