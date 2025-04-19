@@ -31,30 +31,11 @@ Animatable.initializeRegistryWithDefinitions({
 
 const Home = () => {
   const [showInfo, setShowInfo] = useState<batteryProps>();
-  const [getEis, setGetEis] = useState(false);
-  const [getEisProgress, setGetEisProgress] = useState(0);
   const [refresh, setRefresh] = useState(false);
   const { data, loading, refetch } = useFetch(
     "https://serv-5dla.onrender.com/get_dict/0"
   );
   const carData: batteryListI = (data || {}) as batteryListI;
-  if (getEis) {
-    setTimeout(() => {
-      setGetEisProgress((prev) => prev + 0.1);
-    }, 1000);
-  }
-  if (!refresh && !loading) {
-    setTimeout(() => {
-      setRefresh(true);
-    }, 5000);
-  }
-  useEffect(() => {
-    if (getEisProgress >= 1) {
-      setGetEis(false);
-      setGetEisProgress(0);
-      router.push("/information");
-    }
-  }, [getEisProgress]);
   return (
     <ScrollView
       className="bg-primary-100"
@@ -146,28 +127,6 @@ const Home = () => {
             </View>
           </>
         )}
-        {/* <View className="w-full px-4 mt-6 relative">
-          <TouchableOpacity
-            onPress={() => {
-              setGetEis(true);
-            }}
-            className={` bg-secondary-700 rounded-xl p-4 ${getEis ? "hidden" : "visible"}`}
-          >
-            <Text className="text-center font-JakartaBold text-white text-md">
-              Get Eis Progress
-            </Text>
-          </TouchableOpacity>
-          <View
-            className={`absolute top-4 left-4 ${getEis ? "visible" : " hidden"}`}
-          >
-            <Progress.Bar
-              progress={getEisProgress}
-              width={500}
-              className="mx-auto max-w-full"
-              color="#666666"
-            />
-          </View>
-        </View> */}
       </View>
     </ScrollView>
   );

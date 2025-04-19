@@ -1,15 +1,18 @@
 import { View, Text, Image, TouchableOpacity } from "react-native";
-import React from "react";
+import React, { useContext } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { icons, images } from "@/constants";
 import { router } from "expo-router";
 import { useUser } from "@clerk/clerk-expo";
+import { NotificationContext } from "@/providers/NotificationContext";
 
 const ProfileHeader = () => {
-  const {user} = useUser();
+  const { user } = useUser();
+  const { notification } = useContext(NotificationContext);
+
   return (
     <SafeAreaView className="bg-secondary-1000 h-20 py-2">
-      <View className="flex flex-row justify-between w-full px-5 ">
+      <View className="flex flex-row justify-between w-full px-5 relative ">
         <TouchableOpacity
           onPress={() => {
             router.replace("/(root)/notifications");
@@ -20,6 +23,9 @@ const ProfileHeader = () => {
             className="w-7 h-7"
             resizeMode="contain"
           />
+          {notification && (
+            <View className="bg-danger-500 w-3 h-3 rounded-full absolute top-0 right-0" />
+          )}
         </TouchableOpacity>
         <Image
           source={images.logoSmall}

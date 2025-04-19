@@ -19,7 +19,9 @@ const TabIcon = ({
       className={`rounded-full w-12 h-12 items-center justify-center ${focused ? "bg-secondary-700" : ""}`}
     >
       {React.isValidElement(source) ? (
-        <View className="flex items-center justify-center h-full w-full">{source}</View>
+        <View className="flex items-center justify-center h-full w-full">
+          {source}
+        </View>
       ) : (
         <Image
           source={source as ImageSourcePropType}

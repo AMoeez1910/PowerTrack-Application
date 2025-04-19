@@ -34,6 +34,7 @@ import settings from "@/assets/icons/gear.png";
 import fan from "@/assets/images/fan.png";
 import range from "@/assets/images/range.png";
 import circuit from "@/assets/images/circuit.png";
+import warning from "@/assets/icons/warning.png";
 export const images = {
   check,
   signUpCar,
@@ -73,5 +74,6 @@ export const icons = {
   target,
   to,
   bellIcon,
-  settings
+  settings,
+  warning,
 };
