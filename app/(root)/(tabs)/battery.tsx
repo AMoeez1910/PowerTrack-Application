@@ -105,7 +105,7 @@ const Battery = () => {
             right: 0,
             zIndex: 1000,
           }}
-          className="bg-green-600 px-4 py-3 shadow-lg"
+          className="bg-green-600 px-4 pb-6 shadow-lg"
         >
           <View className="flex-row items-center justify-between pt-6">
             <View className="flex-row items-center">

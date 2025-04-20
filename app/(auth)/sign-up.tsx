@@ -7,14 +7,14 @@ import { Link, router } from "expo-router";
 import { useSignUp } from "@clerk/clerk-expo";
 import ReactNativeModal from "react-native-modal";
 import { SafeAreaView } from "react-native-safe-area-context";
-import LinearGradient from "react-native-linear-gradient";
 // import { fetchAPI } from "@/lib/fetch";
+
 const SignUp = () => {
   const { isLoaded, signUp, setActive } = useSignUp();
   const [isLoading, setIsLoading] = useState(false);
   const [verificationLoading, setIsVerificationLoading] = useState(false);
   const [verification, setVerification] = useState({
-    state: "default",
+    state: "default", // default, pending, failed, success
     error: "",
     code: "",
   });
@@ -24,8 +24,15 @@ const SignUp = () => {
     email: "",
     password: "",
   });
+
   const onSignUpPress = async () => {
     if (!isLoaded) {
+      return;
+    }
+
+    // Basic validation
+    if (!form.name || !form.email || !form.password) {
+      Alert.alert("Error", "Please fill all fields");
       return;
     }
 
@@ -39,9 +46,11 @@ const SignUp = () => {
 
       await signUp.prepareEmailAddressVerification({ strategy: "email_code" });
 
-      setVerification({ ...verification, state: "pending" });
+      setVerification({ ...verification, state: "pending", error: "" });
     } catch (err: any) {
-      Alert.alert("Error", err.errors[0].longMessage);
+      const errorMessage =
+        err?.errors?.[0]?.longMessage || "Something went wrong during signup";
+      Alert.alert("Error", errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -67,8 +76,10 @@ const SignUp = () => {
         //     clerkId: completeSignUp.createdUserId,
         //   }),
         // });
+
         await setActive({ session: completeSignUp.createdSessionId });
-        setVerification({ ...verification, state: "success" });
+        setVerification({ ...verification, state: "success", error: "" });
+        setShowSuccessModal(true);
         setForm({ name: "", email: "", password: "" });
       } else {
         setVerification({
@@ -78,15 +89,27 @@ const SignUp = () => {
         });
       }
     } catch (err: any) {
+      const errorMessage =
+        err?.errors?.[0]?.longMessage || "Verification failed";
       setVerification({
         ...verification,
         state: "failed",
-        error: err.errors[0].longMessage,
+        error: errorMessage,
       });
     } finally {
       setIsVerificationLoading(false);
     }
   };
+
+  const handleNavigateAfterSuccess = () => {
+    setShowSuccessModal(false);
+    router.push("/(root)/(tabs)/home");
+  };
+
+  const isFormValid = form.name && form.email && form.password;
+  const isVerificationCodeValid =
+    verification.code && verification.code.length === 6;
+
   return (
     <SafeAreaView className="bg-primary-100 h-full">
       <ScrollView>
@@ -126,6 +149,7 @@ const SignUp = () => {
               title="Sign Up"
               onPress={onSignUpPress}
               isLoading={isLoading}
+              disabled={!isFormValid}
             />
             <View className="flex flex-row justify-center items-center mt-4">
               <Text className="text-black">Already have an account? </Text>
@@ -137,14 +161,11 @@ const SignUp = () => {
         </View>
       </ScrollView>
 
+      {/* Verification Modal */}
       <ReactNativeModal
         isVisible={
           verification.state === "pending" || verification.state === "failed"
         }
-        onModalHide={() => {
-          setVerification({ ...verification, state: "success" });
-          setShowSuccessModal(true);
-        }}
       >
         <View className="bg-white px-7 py-9 rounded-2xl min-h-[300px]">
           <Text className="text-2xl font-JakartaExtraBold mb-2">
@@ -155,13 +176,14 @@ const SignUp = () => {
           </Text>
           <InputField
             label="Code"
-            placeholder="1234"
+            placeholder="123456"
             icon={icons.lock}
             value={verification.code}
             keyboardType="numeric"
             onChangeText={(text) =>
               setVerification({ ...verification, code: text })
             }
+            maxLength={6}
           />
           {verification.error && (
             <Text className="text-center font-JakartaSemiBold text-red-500 mt-3 mx-2">
@@ -173,12 +195,17 @@ const SignUp = () => {
             bgVariant="success"
             title="Verify Email"
             onPress={onPressVerify}
-            isLoading={verificationLoading || verification.code.length !== 6}
+            isLoading={verificationLoading}
+            disabled={!isVerificationCodeValid}
           />
         </View>
       </ReactNativeModal>
 
-      <ReactNativeModal isVisible={showSuccessModal}>
+      {/* Success Modal */}
+      <ReactNativeModal
+        isVisible={showSuccessModal}
+        onBackdropPress={() => handleNavigateAfterSuccess()}
+      >
         <View className="bg-white px-7 py-9 rounded-2xl min-h-[300px]">
           <Image source={images.check} className="w-24 h-24 mx-auto my-5" />
           <Text className="text-3xl font-JakartaBold text-center">
@@ -191,10 +218,7 @@ const SignUp = () => {
             className="mt-4"
             bgVariant="secondary"
             title="Browse Home"
-            onPress={() => {
-              setShowSuccessModal(false);
-              // router.push("/(root)/(tabs)/home");
-            }}
+            onPress={handleNavigateAfterSuccess}
           />
         </View>
       </ReactNativeModal>

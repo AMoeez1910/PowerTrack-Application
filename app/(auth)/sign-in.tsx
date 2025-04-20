@@ -1,4 +1,4 @@
-import { View, Text, ScrollView, Image } from "react-native";
+import { View, Text, ScrollView, Image, Alert } from "react-native";
 import React, { useCallback, useState } from "react";
 import { icons, images } from "@/constants";
 import InputField from "@/components/InputField";
@@ -20,6 +20,10 @@ const SignIn = () => {
     if (!isLoaded) {
       return;
     }
+    if (!form.email || !form.password) {
+      Alert.alert("Error", "Please fill all fields");
+      return;
+    }
 
     try {
       setIsLoading(true);
@@ -31,11 +35,11 @@ const SignIn = () => {
       if (signInAttempt.status === "complete") {
         await setActive({ session: signInAttempt.createdSessionId });
         router.replace("/(root)/(tabs)/home");
-      } else {
-        console.error(JSON.stringify(signInAttempt, null, 2));
       }
     } catch (err: any) {
-      console.error(JSON.stringify(err, null, 2));
+      const errorMessage =
+        err?.errors?.[0]?.longMessage || "Something went wrong during signin";
+      Alert.alert("Error", errorMessage);
     } finally {
       setIsLoading(false);
     }

@@ -4,7 +4,7 @@ import React, { createContext, ReactNode, useState } from "react";
 
 interface NotificationContextType {
   notification: NotificationType | null;
-  setNotification: (notification: NotificationType) => void;
+  setNotification: (notification: NotificationType | null) => void;
 }
 
 export const NotificationContext = createContext<NotificationContextType>({

@@ -48,17 +48,18 @@ const NotificationItem = ({
 
 const Notifications = () => {
   const router = useRouter();
-  const { notification } = useContext(NotificationContext);
+  const { notification, setNotification } = useContext(NotificationContext);
   return (
     <ScrollView className="flex-1 bg-primary-100">
       <View className="px-5 pt-10 pb-[100px]">
         <View className="flex-row items-center mb-5 gap-2">
           <TouchableOpacity
-            onPress={() =>
+            onPress={() => {
+              setNotification(null);
               router.canGoBack()
                 ? router.back()
-                : router.replace("/(root)/(tabs)/home")
-            }
+                : router.replace("/(root)/(tabs)/home");
+            }}
           >
             <ChevronLeft color="black" size={28} />
           </TouchableOpacity>
