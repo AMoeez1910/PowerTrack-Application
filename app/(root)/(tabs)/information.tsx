@@ -78,7 +78,7 @@ const Information = () => {
               placeholder="Select item"
               value={selectedBattery}
               onChange={(item) => {
-                setSelectedBattery(item);
+                if (item.id !== selectedBattery.id) setSelectedBattery(item);
               }}
               labelField="name"
               valueField="id"
@@ -164,7 +164,7 @@ const Information = () => {
             ))
           )}
         </View>
-        {selectedBattery?.warns?.length > 0 && (
+        {(selectedBattery?.warns?.length ?? 0) > 0 && (
           <CustomButton
             title="Fix Battery Warning Issues"
             className="mt-5"

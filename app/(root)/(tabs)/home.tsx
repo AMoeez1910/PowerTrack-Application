@@ -10,7 +10,7 @@ import {
 import React, { useEffect, useState } from "react";
 import { images } from "@/constants";
 import CustomBatterySVG from "@/components/BatteryIcon";
-import { batteryListI, batteryProps } from "@/types/type";
+import { batteryListI, batteryProps, mileageI } from "@/types/type";
 import BatteryInfoCard from "@/components/BatteryInfoCard";
 import * as Animatable from "react-native-animatable";
 import { fetchAPI, useFetch } from "@/lib/fetch";
@@ -32,15 +32,32 @@ Animatable.initializeRegistryWithDefinitions({
 const Home = () => {
   const [showInfo, setShowInfo] = useState<batteryProps>();
   const [refresh, setRefresh] = useState(false);
-  const { data, loading, refetch } = useFetch(
-    "https://serv-5dla.onrender.com/get_dict/0"
-  );
-  const carData: batteryListI = (data || {}) as batteryListI;
+  const [loading, setLoading] = useState(true);
+  const [batteryData, setBatteryData] = useState<batteryListI>();
+  const [mileageData, setMileageData] = useState<mileageI>();
+  const fetchData = async () => {
+    try {
+      const [batteryData, mileageData] = await Promise.all([
+        fetchAPI("https://serv-5dla.onrender.com/get_dict/0"),
+        fetchAPI("https://serv-5dla.onrender.com/get_rng"),
+      ]);
+      setBatteryData(batteryData);
+      setMileageData(mileageData);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+  useEffect(() => {
+    fetchData();
+  }, []);
+
   return (
     <ScrollView
       className="bg-primary-100"
       refreshControl={
-        <RefreshControl refreshing={loading} onRefresh={refetch} />
+        <RefreshControl refreshing={loading} onRefresh={fetchData} />
       }
     >
       {refresh && !loading && (
@@ -49,7 +66,7 @@ const Home = () => {
             <TouchableOpacity
               onPress={() => {
                 setRefresh(false);
-                refetch();
+                fetchData();
               }}
               className="flex flex-row bg-secondary-700 p-3 absolute left-[44%] rounded-full width-[150px] mt-1"
             >
@@ -75,9 +92,8 @@ const Home = () => {
               showsHorizontalScrollIndicator={false}
             >
               <View className="flex flex-row justify-center items-center space-x-1 px-2 pt-24">
-                {Object?.entries(carData)
-                  ?.filter(([key]) => key.startsWith("b"))
-                  ?.map(([key, charge], index) => (
+                {Object.entries(batteryData ?? {})?.map(
+                  ([key, charge], index) => (
                     <Animatable.View
                       key={index}
                       className="items-center"
@@ -89,12 +105,7 @@ const Home = () => {
                         onPress={() => {
                           setShowInfo({
                             id: key,
-                            health: charge,
-                            name: "",
-                            cdl: 0,
-                            rct: 0,
-                            re: 0,
-                            warns: [],
+                            health: (batteryData as Record<string, any>)?.[key]?.health,
                           });
                         }}
                       >
@@ -108,21 +119,16 @@ const Home = () => {
                         {charge}%
                       </Text>
                     </Animatable.View>
-                  ))}
+                  )
+                )}
               </View>
             </ScrollView>
             <View className="flex flex-row flex-1 justify-center items-center mt-14 px-4">
               <BatteryInfoCard
-                img={images.fan}
-                heading="Temperature"
-                cardStyles="mr-8 flex-1"
-                description={`${carData.temp}°C`}
-              />
-              <BatteryInfoCard
                 img={images.range}
                 heading="Range"
                 cardStyles="flex-1"
-                description={`${carData.range} mi`}
+                description={`${mileageData?.rng} mi`}
               />
             </View>
           </>
