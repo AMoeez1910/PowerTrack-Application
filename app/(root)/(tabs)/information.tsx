@@ -1,4 +1,11 @@
-import { View, Text, ScrollView, Image, ActivityIndicator } from "react-native";
+import {
+  View,
+  Text,
+  ScrollView,
+  Image,
+  ActivityIndicator,
+  RefreshControl,
+} from "react-native";
 import React, { useEffect, useState } from "react";
 import CustomBatterySVG from "@/components/BatteryIcon";
 import { batteryProps } from "@/types/type";
@@ -26,7 +33,7 @@ const Information = () => {
   const [selectedBattery, setSelectedBattery] = useState<batteryProps>(
     carData.battery[0]
   );
-  const { data, loading } = useFetch(
+  const { data, loading, refetch } = useFetch(
     `https://serv-5dla.onrender.com/get_dict/${selectedBattery?.id}`
   );
   const batteryData: batteryProps = (data || {}) as batteryProps;
@@ -49,7 +56,12 @@ const Information = () => {
     );
   }
   return (
-    <ScrollView className="flex-1 bg-primary-100 ">
+    <ScrollView
+      className="flex-1 bg-primary-100 "
+      refreshControl={
+        <RefreshControl refreshing={loading} onRefresh={refetch} />
+      }
+    >
       <View className="flex flex-1 mt-5 px-5 pb-[100px]">
         <Text className="text-3xl font-JakartaSemiBold mb-5 ">
           Technical Details
