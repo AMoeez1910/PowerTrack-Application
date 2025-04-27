@@ -20,12 +20,10 @@ const Battery = () => {
   const [showNotification, setShowNotification] = useState(false);
   const [notificationMessage, setNotificationMessage] = useState("");
   const notificationOpacity = useRef(new Animated.Value(0)).current;
-  const notificationTranslateY = useRef(new Animated.Value(-50)).current;
-
-  // Date time picker states
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showTimePicker, setShowTimePicker] = useState(false);
+  const notificationTranslateY = useRef(new Animated.Value(-50)).current;
   const [scheduledTime, setScheduledTime] = useState<Date | null>(null);
   const [countdown, setCountdown] = useState<string | null>(null);
   const countdownTimerRef = useRef<NodeJS.Timeout | null>(null);
@@ -45,6 +43,7 @@ const Battery = () => {
       }),
       Animated.timing(notificationTranslateY, {
         toValue: 0,
+
         duration: 300,
         useNativeDriver: true,
       }),
@@ -67,71 +66,29 @@ const Battery = () => {
       });
     }, 3000);
   };
-
-  // Explicitly show date picker
-  const showDatePickerOnly = () => {
-    setShowDatePicker(true);
-    setShowTimePicker(false);
-  };
-
-  // Explicitly show time picker
-  const showTimePickerOnly = () => {
-    setShowTimePicker(true);
-    setShowDatePicker(false);
-  };
-
-  // Handle date selection
-  const handleDateChange = (event: any, date?: Date) => {
-    if (Platform.OS === "android") {
-      setShowDatePicker(false);
-    }
-
-    if (event.type === "dismissed") {
-      setShowDatePicker(false);
-      return;
-    }
-
+  const handleDateChange = (event: any, date: Date | undefined) => {
     if (date) {
-      const newDate = new Date(selectedDate);
-      newDate.setFullYear(date.getFullYear());
-      newDate.setMonth(date.getMonth());
-      newDate.setDate(date.getDate());
-      setSelectedDate(newDate);
+      setSelectedDate(date);
+      setShowDatePicker(false);
     }
-
-    setShowDatePicker(false);
   };
-
-  // Handle time selection
-  const handleTimeChange = (event: any, time?: Date) => {
-    if (Platform.OS === "android") {
-      setShowTimePicker(false);
-    }
-
-    if (event.type === "dismissed") {
-      setShowTimePicker(false);
-      return;
-    }
-
+  const handleTimeChange = (event: any, time: Date | undefined) => {
     if (time) {
       const newDate = new Date(selectedDate);
       newDate.setHours(time.getHours());
       newDate.setMinutes(time.getMinutes());
       setSelectedDate(newDate);
     }
-
     setShowTimePicker(false);
   };
 
   const scheduleEisAnalysis = () => {
-    // Validate that date and time are in the future
     const now = new Date();
     if (selectedDate.getTime() <= now.getTime()) {
       showTopNotification("Please select a future date and time");
       return;
     }
 
-    // Clear any existing countdown
     if (countdownTimerRef.current) {
       clearInterval(countdownTimerRef.current);
     }
@@ -141,18 +98,15 @@ const Battery = () => {
       `Battery analysis scheduled for ${selectedDate.toLocaleTimeString()}`
     );
 
-    // Set up countdown timer
     countdownTimerRef.current = setInterval(() => {
       const now = new Date();
       const diff = selectedDate.getTime() - now.getTime();
 
       if (diff <= 0) {
-        // Time has arrived, start EIS
         clearInterval(countdownTimerRef.current!);
         setCountdown(null);
         setGetEis(true);
       } else {
-        // Update countdown
         const hours = Math.floor(diff / (1000 * 60 * 60));
         const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
         const seconds = Math.floor((diff % (1000 * 60)) / 1000);
@@ -197,7 +151,6 @@ const Battery = () => {
     }
   }, [getEisProgress, setNotification]);
 
-  // Cleanup on unmount
   useEffect(() => {
     return () => {
       if (countdownTimerRef.current) {
@@ -206,7 +159,6 @@ const Battery = () => {
     };
   }, []);
 
-  // Format date and time for display
   const formattedDate = selectedDate.toLocaleDateString();
   const formattedTime = selectedDate.toLocaleTimeString([], {
     hour: "2-digit",
@@ -257,7 +209,6 @@ const Battery = () => {
             </Text>
           </View>
 
-          {/* Date Time Picker Section */}
           <View className="mt-4 mb-6">
             <Text className="text-lg font-JakartaSemiBold mb-2">
               Schedule Battery Analysis
@@ -265,7 +216,9 @@ const Battery = () => {
 
             <View className="flex-row justify-between mb-3">
               <TouchableOpacity
-                onPress={showDatePickerOnly}
+                onPress={() => {
+                  setShowDatePicker(true);
+                }}
                 className="bg-gray-200 p-4 rounded-xl flex-1 mr-2"
               >
                 <Text className="font-JakartaMedium text-center">
@@ -274,7 +227,9 @@ const Battery = () => {
               </TouchableOpacity>
 
               <TouchableOpacity
-                onPress={showTimePickerOnly}
+                onPress={() => {
+                  setShowTimePicker(true);
+                }}
                 className="bg-gray-200 p-4 rounded-xl flex-1"
               >
                 <Text className="font-JakartaMedium text-center">
