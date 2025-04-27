@@ -19,6 +19,7 @@ const Battery = () => {
   const [getEisProgress, setGetEisProgress] = useState(0);
   const [showNotification, setShowNotification] = useState(false);
   const [notificationMessage, setNotificationMessage] = useState("");
+  const [isErrorNotification, setIsErrorNotification] = useState(false);
   const notificationOpacity = useRef(new Animated.Value(0)).current;
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
@@ -28,8 +29,9 @@ const Battery = () => {
   const [countdown, setCountdown] = useState<string | null>(null);
   const countdownTimerRef = useRef<NodeJS.Timeout | null>(null);
 
-  const showTopNotification = (message: string) => {
+  const showTopNotification = (message: string, isError: boolean = false) => {
     setNotificationMessage(message);
+    setIsErrorNotification(isError);
     setShowNotification(true);
 
     notificationTranslateY.setValue(-50);
@@ -43,7 +45,6 @@ const Battery = () => {
       }),
       Animated.timing(notificationTranslateY, {
         toValue: 0,
-
         duration: 300,
         useNativeDriver: true,
       }),
@@ -66,12 +67,14 @@ const Battery = () => {
       });
     }, 3000);
   };
+
   const handleDateChange = (event: any, date: Date | undefined) => {
     if (date) {
       setSelectedDate(date);
       setShowDatePicker(false);
     }
   };
+
   const handleTimeChange = (event: any, time: Date | undefined) => {
     if (time) {
       const newDate = new Date(selectedDate);
@@ -85,7 +88,7 @@ const Battery = () => {
   const scheduleEisAnalysis = () => {
     const now = new Date();
     if (selectedDate.getTime() <= now.getTime()) {
-      showTopNotification("Please select a future date and time");
+      showTopNotification("Please select a future date and time", true);
       return;
     }
 
@@ -180,12 +183,16 @@ const Battery = () => {
             right: 0,
             zIndex: 1000,
           }}
-          className="bg-green-600 px-4 pb-6 shadow-lg"
+          className={`${isErrorNotification ? "bg-red-600" : "bg-green-600"} px-4 pb-6 shadow-lg`}
         >
           <View className="flex-row items-center justify-between pt-6">
             <View className="flex-row items-center">
               <View className="w-6 h-6 bg-white rounded-full items-center justify-center mr-2">
-                <Text className="text-green-600 font-bold">✓</Text>
+                <Text
+                  className={`${isErrorNotification ? "text-red-600" : "text-green-600"} font-bold`}
+                >
+                  {isErrorNotification ? "!" : "✓"}
+                </Text>
               </View>
               <Text className="text-white font-JakartaSemiBold">
                 {notificationMessage}
