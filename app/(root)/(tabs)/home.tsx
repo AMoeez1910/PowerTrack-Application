@@ -34,6 +34,7 @@ const Home = () => {
   const [mileageData, setMileageData] = useState<mileageI>();
   const fetchData = async () => {
     try {
+      setLoading(true);
       const mileageData = await fetchAPI(
         "https://serv-5dla.onrender.com/get_rng"
       );
