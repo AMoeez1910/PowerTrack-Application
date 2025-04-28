@@ -26,7 +26,13 @@ declare type WarningProps = {
   message: string;
 };
 declare interface mileageI {
-  rng: number;
+  rng: {
+    b1: number;
+    b2: number;
+    b3: number;
+    b4: number;
+    rng: number;
+  };
 }
 declare interface batteryListI {
   b1: number;

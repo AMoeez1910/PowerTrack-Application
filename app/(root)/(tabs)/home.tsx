@@ -10,13 +10,11 @@ import {
 import React, { useEffect, useState } from "react";
 import { images } from "@/constants";
 import CustomBatterySVG from "@/components/BatteryIcon";
-import { batteryListI, batteryProps, mileageI } from "@/types/type";
+import { batteryProps, mileageI } from "@/types/type";
 import BatteryInfoCard from "@/components/BatteryInfoCard";
 import * as Animatable from "react-native-animatable";
-import { fetchAPI, useFetch } from "@/lib/fetch";
+import { fetchAPI } from "@/lib/fetch";
 import { RotateCcw } from "lucide-react-native";
-import * as Progress from "react-native-progress";
-import { router } from "expo-router";
 
 Animatable.initializeRegistryWithDefinitions({
   translateY: {
@@ -33,15 +31,12 @@ const Home = () => {
   const [showInfo, setShowInfo] = useState<batteryProps>();
   const [refresh, setRefresh] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [batteryData, setBatteryData] = useState<batteryListI>();
   const [mileageData, setMileageData] = useState<mileageI>();
   const fetchData = async () => {
     try {
-      const [batteryData, mileageData] = await Promise.all([
-        fetchAPI("https://serv-5dla.onrender.com/get_dict/0"),
-        fetchAPI("https://serv-5dla.onrender.com/get_rng"),
-      ]);
-      setBatteryData(batteryData);
+      const mileageData = await fetchAPI(
+        "https://serv-5dla.onrender.com/get_rng"
+      );
       setMileageData(mileageData);
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -92,35 +87,38 @@ const Home = () => {
               showsHorizontalScrollIndicator={false}
             >
               <View className="flex flex-row justify-center items-center space-x-1 px-2 pt-24">
-                {Object.entries(batteryData ?? {})?.map(
-                  ([key, charge], index) => (
-                    <Animatable.View
-                      key={index}
-                      className="items-center"
-                      animation={
-                        showInfo?.id === key ? "translateY" : "translateBack"
-                      }
-                    >
-                      <TouchableOpacity
-                        onPress={() => {
-                          setShowInfo({
-                            id: key,
-                            health: (batteryData as Record<string, any>)?.[key]?.health,
-                          });
-                        }}
+                {mileageData &&
+                  Object.entries(mileageData.rng ?? {})
+                    ?.filter(([key]) => key.startsWith("b"))
+                    .map(([key, charge], index) => (
+                      <Animatable.View
+                        key={index}
+                        className="items-center"
+                        animation={
+                          showInfo?.id === key ? "translateY" : "translateBack"
+                        }
                       >
-                        <CustomBatterySVG
-                          charge={charge as number}
-                          width={60}
-                          height={100}
-                        />
-                      </TouchableOpacity>
-                      <Text className="text-center font-JakartaBold">
-                        {charge}%
-                      </Text>
-                    </Animatable.View>
-                  )
-                )}
+                        <TouchableOpacity
+                          onPress={() => {
+                            setShowInfo({
+                              id: key,
+                              health: (
+                                mileageData?.rng as Record<string, any>
+                              )?.[key]?.health,
+                            });
+                          }}
+                        >
+                          <CustomBatterySVG
+                            charge={charge as number}
+                            width={60}
+                            height={100}
+                          />
+                        </TouchableOpacity>
+                        <Text className="text-center font-JakartaBold">
+                          {charge}%
+                        </Text>
+                      </Animatable.View>
+                    ))}
               </View>
             </ScrollView>
             <View className="flex flex-row flex-1 justify-center items-center mt-14 px-4">
@@ -128,7 +126,7 @@ const Home = () => {
                 img={images.range}
                 heading="Range"
                 cardStyles="flex-1"
-                description={`${mileageData?.rng || 0} mi`}
+                description={`${mileageData?.rng.rng || 0} mi`}
               />
             </View>
           </>
