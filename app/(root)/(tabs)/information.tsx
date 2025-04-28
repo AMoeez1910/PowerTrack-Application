@@ -194,7 +194,7 @@ const Information = () => {
           setModalVisible(false);
         }}
       >
-        <ScrollView className="bg-white px-7 py-4 rounded-2xl max-h-[600px]">
+        <ScrollView className="bg-white px-7 my-6 rounded-2xl max-h-[800px]">
           <View className="flex justify-center items-center">
             <Image source={images.circuit} />
             <Text>Circuit Diagram {selectedBattery.name}</Text>
