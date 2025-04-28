@@ -128,7 +128,7 @@ const Home = () => {
                 img={images.range}
                 heading="Range"
                 cardStyles="flex-1"
-                description={`${mileageData?.rng} mi`}
+                description={`${mileageData?.rng || 0} mi`}
               />
             </View>
           </>

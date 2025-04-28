@@ -149,7 +149,7 @@ const Profile = () => {
   return (
     <View style={{ flex: 1 }} className="h-full">
       <LinearGradient
-        colors={["#00701F", "#6E6EC9", "#936EFB", "#7B59DC", "#1C006C"]}
+        colors={["#222831", "#393E46", "#222222", "#0C0C0C"]}
         style={{ flex: 1 }}
         className="h-full"
       >
@@ -254,7 +254,7 @@ const Profile = () => {
             />
 
             <TouchableOpacity
-              className="bg-green-600 py-4 rounded-xl mt-6"
+              className="bg-[#169976] py-4 rounded-xl mt-6"
               onPress={handleUpdateProfile}
               disabled={loading}
             >

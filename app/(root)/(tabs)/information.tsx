@@ -125,8 +125,7 @@ const Information = () => {
             <Text className="text-lg ml-2 font-Jakarta">
               Double-Layer Capacitance (Cdl):{" "}
               <Text className="text-lg font-JakartaBold">
-                {selectedBattery.cdl}
-                μF
+                {((selectedBattery.cdl ?? 0) * Math.pow(10, 3)).toFixed(5)} μF
               </Text>
             </Text>
           </View>
@@ -171,7 +170,9 @@ const Information = () => {
                 <Svg height="7" width="7" viewBox="0 0 10 10">
                   <Circle cx="5" cy="5" r="5" fill="#1F1F1F" />
                 </Svg>
-                <Text className="text-lg ml-2 font-Jakarta">{warning}</Text>
+                <Text className="text-lg ml-2 font-Jakarta">
+                  {warningFix(warning).title}
+                </Text>
               </View>
             ))
           )}
@@ -201,11 +202,18 @@ const Information = () => {
               {selectedBattery?.warns?.map((warning, index) => (
                 <View key={index}>
                   <Text className="text-2xl font-JakartaExtraBold mb-2">
-                    {warning}:
+                    {warningFix(warning).title}:
                   </Text>
-                  <Text className="text-sm font-Jakarta mb-5">
-                    {warningFix(warning)}
-                  </Text>
+                  {warningFix(warning).fix.map((fix, index) => (
+                    <View key={index} className="flex flex-row items-center">
+                      <Svg height="7" width="7" viewBox="0 0 10 10">
+                        <Circle cx="5" cy="5" r="5" fill="#1F1F1F" />
+                      </Svg>
+                      <Text className="text-sm ml-2 font-Jakarta mb-2">
+                        {fix}
+                      </Text>
+                    </View>
+                  ))}
                 </View>
               ))}
             </View>

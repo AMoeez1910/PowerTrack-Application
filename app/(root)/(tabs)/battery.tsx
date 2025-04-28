@@ -6,6 +6,7 @@ import {
   Animated,
   StatusBar,
   Platform,
+  Dimensions,
 } from "react-native";
 import React, { useContext, useEffect, useState, useRef } from "react";
 import * as Progress from "react-native-progress";
@@ -14,6 +15,7 @@ import { notificationData } from "@/lib/data";
 import DateTimePicker from "@react-native-community/datetimepicker";
 
 const Battery = () => {
+  const { width: screenWidth } = Dimensions.get("window");
   const [getEis, setGetEis] = useState(false);
   const { setNotification } = useContext(NotificationContext);
   const [getEisProgress, setGetEisProgress] = useState(0);
@@ -28,6 +30,7 @@ const Battery = () => {
   const [scheduledTime, setScheduledTime] = useState<Date | null>(null);
   const [countdown, setCountdown] = useState<string | null>(null);
   const countdownTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const progressBarWidth = screenWidth - 50; // Accounting for padding
 
   const showTopNotification = (message: string, isError: boolean = false) => {
     setNotificationMessage(message);
@@ -85,7 +88,22 @@ const Battery = () => {
     setShowTimePicker(false);
   };
 
+  const cancelScheduledAnalysis = () => {
+    if (countdownTimerRef.current) {
+      clearInterval(countdownTimerRef.current);
+      countdownTimerRef.current = null;
+    }
+    setScheduledTime(null);
+    setCountdown(null);
+    showTopNotification("Scheduled analysis canceled");
+  };
+
   const scheduleEisAnalysis = () => {
+    // First cancel any existing scheduled analysis
+    if (scheduledTime) {
+      cancelScheduledAnalysis();
+    }
+
     const now = new Date();
     if (selectedDate.getTime() <= now.getTime()) {
       showTopNotification("Please select a future date and time", true);
@@ -227,6 +245,7 @@ const Battery = () => {
                   setShowDatePicker(true);
                 }}
                 className="bg-gray-200 p-4 rounded-xl flex-1 mr-2"
+                disabled={getEis}
               >
                 <Text className="font-JakartaMedium text-center">
                   Date: {formattedDate}
@@ -238,6 +257,7 @@ const Battery = () => {
                   setShowTimePicker(true);
                 }}
                 className="bg-gray-200 p-4 rounded-xl flex-1"
+                disabled={getEis}
               >
                 <Text className="font-JakartaMedium text-center">
                   Time: {formattedTime}
@@ -269,51 +289,70 @@ const Battery = () => {
 
             <TouchableOpacity
               onPress={scheduleEisAnalysis}
-              className="bg-primary-700 rounded-xl p-4 mb-4"
-              disabled={getEis}
+              className={`${getEis || scheduledTime ? "bg-gray-400" : "bg-primary-700"} rounded-xl p-4 mb-4`}
+              disabled={getEis || scheduledTime !== null}
             >
+              {" "}
               <Text className="text-center font-JakartaBold text-white text-md">
-                Schedule Analysis
-              </Text>
+                {" "}
+                {scheduledTime
+                  ? "Schedule InProgress"
+                  : "Schedule Analysis"}{" "}
+              </Text>{" "}
             </TouchableOpacity>
 
             {countdown && (
-              <View className="items-center bg-blue-100 p-4 rounded-xl">
+              <View className="items-center bg-blue-100 p-4 rounded-xl mb-3">
                 <Text className="text-lg font-JakartaSemiBold text-blue-800">
                   Analysis starts in:
                 </Text>
-                <Text className="text-2xl font-JakartaBold text-blue-800">
+                <Text className="text-2xl font-JakartaBold text-blue-800 mb-2">
                   {countdown}
                 </Text>
+                <TouchableOpacity
+                  onPress={cancelScheduledAnalysis}
+                  className="bg-red-500 rounded-xl p-2 mt-1 px-4"
+                >
+                  <Text className="text-center font-JakartaBold text-white">
+                    Cancel
+                  </Text>
+                </TouchableOpacity>
               </View>
             )}
           </View>
 
-          <View className="w-full mt-2 pr-2">
+          <View className="w-full mt-2">
             {!getEis ? (
               <TouchableOpacity
                 onPress={() => {
+                  // Cancel any scheduled analysis first
+                  if (scheduledTime) {
+                    cancelScheduledAnalysis();
+                  }
                   setGetEis(true);
                 }}
-                className="bg-secondary-700 rounded-xl p-4"
-                disabled={!!scheduledTime}
+                className={`${scheduledTime ? "bg-gray-500" : "bg-secondary-700"} rounded-xl p-4`}
               >
                 <Text className="text-center font-JakartaBold text-white text-md">
-                  {scheduledTime ? "Analysis Scheduled" : "Start Analysis Now"}
+                  Start Analysis Now
                 </Text>
               </TouchableOpacity>
             ) : (
-              <View>
+              <View className="w-full">
                 <Text className="text-center font-JakartaSemiBold mb-2">
                   Battery Analysis in Progress
                 </Text>
-                <Progress.Bar
-                  progress={getEisProgress}
-                  width={1000}
-                  className="max-w-full"
-                  color="#666666"
-                />
-                <Text className="text-right font-JakartaMedium mt-1">
+                <View style={{ width: "100%" }}>
+                  <Progress.Bar
+                    progress={getEisProgress}
+                    width={progressBarWidth}
+                    color="#666666"
+                    unfilledColor="#e0e0e0"
+                    borderColor="#cccccc"
+                    height={10}
+                  />
+                </View>
+                <Text className="text-right font-JakartaMedium mt-2">
                   {Math.round(getEisProgress * 100)}%
                 </Text>
               </View>

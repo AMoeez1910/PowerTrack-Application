@@ -43,25 +43,52 @@ export const carData: carDataProps = {
     },
   ],
 };
-
+export type BatteryWarningT = {
+  title: string;
+  fix: string[];
+};
 export const warningFix = (warning: string) => {
-  const warningMap: { [key: string]: string } = {
-    "High Voltage":
-      "High voltage can indicate an overcharge condition or a fault in the battery management system. Verify the charging system settings and ensure that the charging voltage is within the manufacturer's recommended range. Check for any faults in the battery management system that may be causing the high voltage condition. If the issue persists, consult a technician for further diagnosis and repair.",
-    "High Current":
-      "High current can indicate an excessive load on the battery or a fault in the charging system. Reduce the load on the battery to prevent damage and ensure that the charging system is functioning correctly. Check for any short circuits or faults in the wiring that may be causing the high current condition. If the issue persists, consult a technician for further diagnosis and repair.",
-    "Cell Overheating":
-      "Cell overheating can lead to reduced battery life and potential safety hazards. Ensure that the cooling system is functioning correctly and that the battery is not exposed to high ambient temperatures. Check for proper ventilation around the battery pack and verify that cooling fans or other temperature management systems are operating correctly. Overheating can also be caused by excessive discharge rates or external heat sources.",
-    "End of Life":
-      "End of life indicates that the battery has reached the end of its usable capacity and should be replaced. Batteries degrade over time and use, resulting in reduced performance and capacity. Replace the battery with a new one to restore performance and prevent potential safety hazards. Properly dispose of the old battery according to local regulations.",
-    "High CT Resistance":
-      "High charge transfer resistance can indicate poor cell performance or a fault in the battery management system. Check the battery cells for any signs of damage or degradation. Verify that the battery management system is functioning correctly and that the cells are balanced. If the issue persists, consult a technician for further diagnosis and repair.",
-    "Low CT Resistance":
-      "Low charge transfer resistance can indicate a short circuit or other fault in the battery pack. Check the battery pack for any signs of damage or short circuits. Verify that the connections are secure and free from corrosion. If the issue persists, consult a technician for further diagnosis and repair.",
-    "High E Resistance":
-      "High internal resistance can indicate poor cell performance or a fault in the battery management system. Check the battery cells for any signs of damage or degradation. Verify that the battery management system is functioning correctly and that the cells are balanced. If the issue persists, consult a technician for further diagnosis and repair.",
-    "Low E Resistance":
-      "Low internal resistance can indicate a short circuit or other fault in the battery pack. Check the battery pack for any signs of damage or short circuits. Verify that the connections are secure and free from corrosion. If the issue persists, consult a technician for further diagnosis and repair.",
+  const warningMap: { [key: string]: BatteryWarningT } = {
+    "1": {
+      title: "Lithium Plating",
+      fix: [
+        "Avoid charging your EV in cold environments",
+        "Use slower charging when the battery is cold",
+        "Pre-condition or warm up the battery before plugging in",
+      ],
+    },
+    "2": {
+      title: "Electrolyte Decomposition",
+      fix: [
+        "Avoid full charges frequently (stay within 20–80%)",
+        "Don’t leave the EV in hot environments",
+        "Ensure cooling systems are working properly",
+      ],
+    },
+    "3": {
+      title: "SEI Layer Degradation",
+      fix: [
+        "Avoid letting the battery drop below 10%",
+        "Drive and charge moderately",
+        "Use manufacturer-recommended charging patterns",
+      ],
+    },
+    "4": {
+      title: "SEI Overgrowth",
+      fix: [
+        "Avoid storing battery fully charged",
+        "Use the EV regularly, or run occasional charge cycles",
+        "Store battery at around 50% charge if unused for long periods",
+      ],
+    },
+    "5": {
+      title: "End of Life (EOL)",
+      fix: [
+        "Replace the battery module",
+        "In future, follow best practices to extend battery life",
+        "Consider battery reuse for secondary (stationary) applications if viable",
+      ],
+    },
   };
   return warningMap[warning] || `No detailed fix available for: ${warning}`;
 };
