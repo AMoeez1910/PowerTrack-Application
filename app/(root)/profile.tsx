@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   Alert,
   ScrollView,
+  ActivityIndicator,
 } from "react-native";
 import React, { useState, useEffect } from "react";
 import { useClerk, useUser } from "@clerk/clerk-expo";
@@ -14,6 +15,7 @@ import { ChevronLeft, Camera } from "lucide-react-native";
 import { useRouter } from "expo-router";
 import InputField from "@/components/InputField";
 import * as ImagePicker from "expo-image-picker";
+import * as FileSystem from "expo-file-system";
 
 const Profile = () => {
   const { user } = useUser();
@@ -30,6 +32,7 @@ const Profile = () => {
   });
 
   const [loading, setLoading] = useState(false);
+  const [profileUpdateLoading, setProfileUpdateLoading] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -44,7 +47,7 @@ const Profile = () => {
 
   const handleUpdateProfile = async () => {
     try {
-      setLoading(true);
+      setProfileUpdateLoading(true);
       if (
         form.firstName !== user?.firstName ||
         form.lastName !== user?.lastName
@@ -58,7 +61,7 @@ const Profile = () => {
       if (form.password) {
         if (form.password !== form.confirmPassword) {
           Alert.alert("Error", "Passwords do not match");
-          setLoading(false);
+          setProfileUpdateLoading(false);
           return;
         }
 
@@ -85,12 +88,27 @@ const Profile = () => {
           Alert.alert("Error", "Failed to update password. Please try again.");
           console.error(error);
         }
+      } else {
+        Alert.alert("Success", "Profile updated successfully");
       }
     } catch (error) {
       Alert.alert("Error", "Failed to update profile");
       console.error(error);
     } finally {
-      setLoading(false);
+      setProfileUpdateLoading(false);
+    }
+  };
+
+  // Convert image URI to base64
+  const convertImageToBase64 = async (uri: string) => {
+    try {
+      const base64 = await FileSystem.readAsStringAsync(uri, {
+        encoding: FileSystem.EncodingType.Base64,
+      });
+      return base64;
+    } catch (error) {
+      console.error("Error converting image to base64:", error);
+      throw error;
     }
   };
 
@@ -118,9 +136,31 @@ const Profile = () => {
         setLoading(true);
 
         try {
+          const imageUri = result.assets[0].uri;
+          const base64Image = await convertImageToBase64(imageUri);
+          const imageType = (imageUri.split(".").pop() || "").toLowerCase();
+          let mimeType;
+
+          switch (imageType) {
+            case "jpg":
+            case "jpeg":
+              mimeType = "image/jpeg";
+              break;
+            case "png":
+              mimeType = "image/png";
+              break;
+            case "gif":
+              mimeType = "image/gif";
+              break;
+            default:
+              mimeType = "image/jpeg"; 
+          }
+
+          const base64DataUrl = `data:${mimeType};base64,${base64Image}`;
+
           if (user?.setProfileImage) {
             await user.setProfileImage({
-              file: result.assets[0].uri,
+              file: base64DataUrl,
             });
 
             if (user?.reload) {
@@ -133,9 +173,12 @@ const Profile = () => {
               "Profile image update requires a different flow with Clerk"
             );
           }
-        } catch (error) {
-          Alert.alert("Error", "Failed to update profile picture");
-          console.error(error);
+        } catch (error:any) {
+          Alert.alert(
+            "Error",
+            "Failed to update profile picture: " + error.message
+          );
+          console.error("Detailed image upload error:", error);
         } finally {
           setLoading(false);
         }
@@ -183,12 +226,24 @@ const Profile = () => {
           showsVerticalScrollIndicator={false}
         >
           <View className="flex items-center mt-6">
-            <TouchableOpacity className="relative" onPress={handleImagePick}>
-              <Image
-                source={user?.imageUrl ? { uri: user.imageUrl } : icons.profile}
-                className="w-24 h-24 rounded-full"
-                resizeMode="cover"
-              />
+            <TouchableOpacity
+              className="relative"
+              onPress={handleImagePick}
+              disabled={loading}
+            >
+              {loading ? (
+                <View className="w-24 h-24 rounded-full bg-gray-700 justify-center items-center">
+                  <ActivityIndicator size="small" color="white" />
+                </View>
+              ) : (
+                <Image
+                  source={
+                    user?.imageUrl ? { uri: user.imageUrl } : icons.profile
+                  }
+                  className="w-24 h-24 rounded-full"
+                  resizeMode="cover"
+                />
+              )}
               <View className="absolute bottom-0 right-0 bg-green-700 p-2 rounded-full">
                 <Camera size={14} color="white" />
               </View>
@@ -256,10 +311,10 @@ const Profile = () => {
             <TouchableOpacity
               className="bg-[#169976] py-4 rounded-xl mt-6"
               onPress={handleUpdateProfile}
-              disabled={loading}
+              disabled={profileUpdateLoading}
             >
               <Text className="text-white text-center font-bold text-base">
-                {loading ? "Updating..." : "Update Profile"}
+                {profileUpdateLoading ? "Updating..." : "Update Profile"}
               </Text>
             </TouchableOpacity>
           </View>
