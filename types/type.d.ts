@@ -60,6 +60,7 @@ declare interface batteryProps {
   health?: number;
   rct?: number;
   re?: number;
+  rul?: number;
   warns?: string[];
 }
 declare interface carDataProps {

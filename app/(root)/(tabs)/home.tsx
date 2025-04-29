@@ -17,13 +17,59 @@ import { fetchAPI } from "@/lib/fetch";
 import { RotateCcw } from "lucide-react-native";
 
 Animatable.initializeRegistryWithDefinitions({
-  translateY: {
-    from: { translateY: 0 },
-    to: { translateY: -20 },
+  batteryHover: {
+    0: {
+      translateY: 0,
+      scaleX: 1,
+      scaleY: 1,
+    },
+    0.5: {
+      translateY: -10,
+      scaleX: 1.05,
+      scaleY: 1.05,
+    },
+    1: {
+      translateY: -15,
+      scaleX: 1.1,
+      scaleY: 1.1,
+    },
   },
-  translateBack: {
-    from: { translateY: -20 },
-    to: { translateY: 0 },
+  batteryReset: {
+    0: {
+      translateY: -15,
+      scaleX: 1.1,
+      scaleY: 1.1,
+    },
+    0.5: {
+      translateY: -5,
+      scaleX: 1.05,
+      scaleY: 1.05,
+    },
+    1: {
+      translateY: 0,
+      scaleX: 1,
+      scaleY: 1,
+    },
+  },
+  refreshButtonSlideIn: {
+    from: {
+      translateY: -40,
+      opacity: 0,
+    },
+    to: {
+      translateY: 0,
+      opacity: 1,
+    },
+  },
+  refreshButtonSlideOut: {
+    from: {
+      translateY: 0,
+      opacity: 1,
+    },
+    to: {
+      translateY: -40,
+      opacity: 0,
+    },
   },
 });
 
@@ -32,6 +78,7 @@ const Home = () => {
   const [refresh, setRefresh] = useState(false);
   const [loading, setLoading] = useState(true);
   const [mileageData, setMileageData] = useState<mileageI>();
+
   const fetchData = async () => {
     try {
       setLoading(true);
@@ -45,6 +92,7 @@ const Home = () => {
       setLoading(false);
     }
   };
+
   useEffect(() => {
     fetchData();
   }, []);
@@ -56,21 +104,25 @@ const Home = () => {
         <RefreshControl refreshing={loading} onRefresh={fetchData} />
       }
     >
-      {refresh && !loading && (
-        <View>
-          <Animatable.View animation="translateBack" useNativeDriver>
-            <TouchableOpacity
-              onPress={() => {
-                setRefresh(false);
-                fetchData();
-              }}
-              className="flex flex-row bg-secondary-700 p-3 absolute left-[44%] rounded-full width-[150px] mt-1"
-            >
-              <RotateCcw className="text-white" size={20} />
-            </TouchableOpacity>
-          </Animatable.View>
-        </View>
+      {!loading && (
+        <Animatable.View
+          animation={refresh ? "refreshButtonSlideIn" : "refreshButtonSlideOut"}
+          duration={500}
+          useNativeDriver
+          className="absolute z-10 left-0 right-0 flex items-center mt-1"
+        >
+          <TouchableOpacity
+            onPress={() => {
+              setRefresh(false);
+              fetchData();
+            }}
+            className="flex flex-row bg-secondary-700 p-3 rounded-full px-5"
+          >
+            <RotateCcw className="text-white" size={20} />
+          </TouchableOpacity>
+        </Animatable.View>
       )}
+
       <View className="flex flex-1 mt-16 justify-center items-center h-full">
         <Image
           source={images.car}
@@ -83,43 +135,57 @@ const Home = () => {
           </View>
         ) : (
           <>
+            <Text className="text-2xl font-JakartaSemiBold mb-5 mt-5">
+              State of Charge
+            </Text>
             <ScrollView
               horizontal={true}
               showsHorizontalScrollIndicator={false}
             >
-              <View className="flex flex-row justify-center items-center space-x-1 px-2 pt-24">
+              <View className="flex flex-row justify-center items-center space-x-1 px-2 pt-8">
                 {mileageData &&
                   Object.entries(mileageData.rng ?? {})
                     ?.filter(([key]) => key.startsWith("b"))
-                    .map(([key, charge], index) => (
-                      <Animatable.View
-                        key={index}
-                        className="items-center"
-                        animation={
-                          showInfo?.id === key ? "translateY" : "translateBack"
-                        }
-                      >
-                        <TouchableOpacity
-                          onPress={() => {
-                            setShowInfo({
-                              id: key,
-                              health: (
-                                mileageData?.rng as Record<string, any>
-                              )?.[key]?.health,
-                            });
-                          }}
+                    .map(([key, charge], index) => {
+                      const isSelected = showInfo?.id === key;
+                      return (
+                        <Animatable.View
+                          key={index}
+                          className="items-center"
+                          animation={
+                            isSelected ? "batteryHover" : "batteryReset"
+                          }
+                          duration={500}
+                          easing="ease-out"
+                          useNativeDriver
                         >
-                          <CustomBatterySVG
-                            charge={charge as number}
-                            width={60}
-                            height={100}
-                          />
-                        </TouchableOpacity>
-                        <Text className="text-center font-JakartaBold">
-                          {charge}%
-                        </Text>
-                      </Animatable.View>
-                    ))}
+                          <TouchableOpacity
+                            onPress={() => {
+                              // Deselect if already selected, otherwise select
+                              if (isSelected) {
+                                setShowInfo(undefined);
+                              } else {
+                                setShowInfo({
+                                  id: key,
+                                  health: (
+                                    mileageData?.rng as Record<string, any>
+                                  )?.[key]?.health,
+                                });
+                              }
+                            }}
+                          >
+                            <CustomBatterySVG
+                              charge={charge as number}
+                              width={60}
+                              height={100}
+                            />
+                          </TouchableOpacity>
+                          <Text className="text-center font-JakartaBold mt-1">
+                            {charge}%
+                          </Text>
+                        </Animatable.View>
+                      );
+                    })}
               </View>
             </ScrollView>
             <View className="flex flex-row flex-1 justify-center items-center mt-14 px-4">
@@ -136,4 +202,5 @@ const Home = () => {
     </ScrollView>
   );
 };
+
 export default Home;

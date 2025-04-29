@@ -46,6 +46,7 @@ const Information = () => {
         rct: batteryData.rct,
         re: batteryData.re,
         warns: batteryData.warns,
+        rul: batteryData.rul,
       });
   }, [data]);
   if (loading) {
@@ -125,7 +126,7 @@ const Information = () => {
             <Text className="text-lg ml-2 font-Jakarta">
               Double-Layer Capacitance (Cdl):{" "}
               <Text className="text-lg font-JakartaBold">
-                {((selectedBattery.cdl ?? 0) * Math.pow(10, 3)).toFixed(5)} μF
+                {((selectedBattery.cdl ?? 0) * Math.pow(10, 3)).toFixed(3)} mF
               </Text>
             </Text>
           </View>
@@ -140,15 +141,25 @@ const Information = () => {
               </Text>
             </Text>
           </View>
-          <View className="flex flex-row items-center ml-2">
+          <View className="flex flex-row items-center ml-2 mb-2">
             <Svg height="7" width="7" viewBox="0 0 10 10">
               <Circle cx="5" cy="5" r="5" fill="#1F1F1F" />
             </Svg>
             <Text className="text-lg ml-2 font-Jakarta">
               Internal Resistance (R0):{" "}
               <Text className="text-lg font-JakartaBold">
-                {selectedBattery.re}
-                mΩ
+                {selectedBattery.re}Ω
+              </Text>
+            </Text>
+          </View>
+          <View className="flex flex-row items-center ml-2">
+            <Svg height="7 " width="7" viewBox="0 0 10 10">
+              <Circle cx="5" cy="5" r="5" fill="#1F1F1F" />
+            </Svg>
+            <Text className="text-lg ml-2 font-Jakarta mb-2">
+              Remaining Useful Life (RUL):{" "}
+              <Text className="text-lg font-JakartaBold">
+                {selectedBattery.rul}s
               </Text>
             </Text>
           </View>
