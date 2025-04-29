@@ -5,6 +5,7 @@ import { Feather } from "@expo/vector-icons";
 import { NotificationType } from "@/lib/data";
 import { useRouter } from "expo-router";
 import { ChevronLeft } from "lucide-react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const NotificationItem = ({
   notification,
@@ -50,37 +51,39 @@ const Notifications = () => {
   const router = useRouter();
   const { notification, setNotification } = useContext(NotificationContext);
   return (
-    <ScrollView className="flex-1 bg-primary-100">
-      <View className="px-5 pt-10 pb-[100px]">
-        <View className="flex-row items-center mb-5 gap-2">
-          <TouchableOpacity
-            onPress={() => {
-              setNotification(null);
-              router.canGoBack()
-                ? router.back()
-                : router.replace("/(root)/(tabs)/home");
-            }}
-          >
-            <ChevronLeft color="black" size={28} />
-          </TouchableOpacity>
-          <Text className="text-3xl font-JakartaSemiBold">Notifications</Text>
+    <SafeAreaView className="flex-1 bg-primary-100">
+      <ScrollView className="flex-1 bg-primary-100">
+        <View className="px-5 pb-[100px]">
+          <View className="flex-row items-center mb-5 gap-2">
+            <TouchableOpacity
+              onPress={() => {
+                setNotification(null);
+                router.canGoBack()
+                  ? router.back()
+                  : router.replace("/(root)/(tabs)/home");
+              }}
+            >
+              <ChevronLeft color="black" size={28} />
+            </TouchableOpacity>
+            <Text className="text-3xl font-JakartaSemiBold">Notifications</Text>
+          </View>
+          {notification ? (
+            <View className="mt-2">
+              <NotificationItem
+                key={notification.id}
+                notification={notification}
+              />
+            </View>
+          ) : (
+            <View className="flex items-center justify-center mt-10">
+              <Text className="text-gray-500 text-lg font-JakartaMedium">
+                No notifications yet
+              </Text>
+            </View>
+          )}
         </View>
-        {notification ? (
-          <View className="mt-2">
-            <NotificationItem
-              key={notification.id}
-              notification={notification}
-            />
-          </View>
-        ) : (
-          <View className="flex items-center justify-center mt-10">
-            <Text className="text-gray-500 text-lg font-JakartaMedium">
-              No notifications yet
-            </Text>
-          </View>
-        )}
-      </View>
-    </ScrollView>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 
