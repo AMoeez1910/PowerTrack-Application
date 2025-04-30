@@ -93,28 +93,46 @@ export const warningFix = (warning: string) => {
   return warningMap[warning] || `No detailed fix available for: ${warning}`;
 };
 export type NotificationType = {
-  id: string;
+  id?: string;
   title: string;
   type: "warning" | "info" | "update";
-  read: boolean;
+  read?: boolean;
 };
 export const notificationData: NotificationType[] = [
   {
     id: "1",
-    title: "Battery 2 health is getting low!",
-    type: "warning",
-    read: false,
-  },
-  {
-    id: "2",
-    title: "Recommended steps to increase battery health",
+    title: "Scheduled EIS Activated",
     type: "info",
     read: false,
   },
   {
-    id: "3",
-    title: "New update available. Download it now!",
+    id: "2",
+    title: "EIS Completed Successfully",
     type: "update",
+    read: false,
+  },
+  {
+    id: "3",
+    title: "High Impedance Detected",
+    type: "warning",
+    read: false,
+  },
+  {
+    id: "4",
+    title: "High Impedance Detected",
+    type: "warning",
+    read: false,
+  },
+  {
+    id: "5",
+    title: "Firmware Update Available",
+    type: "update",
+    read: false,
+  },
+  {
+    id: "6",
+    title: "Rapid SOH Decline Noted",
+    type: "warning",
     read: false,
   },
 ];

@@ -190,7 +190,7 @@ const Battery = () => {
     <View className="flex-1 bg-primary-100">
       <StatusBar backgroundColor="transparent" translucent />
 
-      {showNotification && (
+      {showNotification ? (
         <Animated.View
           style={{
             opacity: notificationOpacity,
@@ -221,7 +221,7 @@ const Battery = () => {
             </TouchableOpacity>
           </View>
         </Animated.View>
-      )}
+      ) : null}
 
       <ScrollView className="h-[100vh]">
         <View className="flex flex-1 mt-5 px-5 pb-[100px] h-full">
@@ -265,7 +265,7 @@ const Battery = () => {
               </TouchableOpacity>
             </View>
 
-            {showDatePicker && (
+            {showDatePicker ? (
               <DateTimePicker
                 testID="datePicker"
                 value={selectedDate}
@@ -274,9 +274,9 @@ const Battery = () => {
                 display="default"
                 onChange={handleDateChange}
               />
-            )}
+            ) : null}
 
-            {showTimePicker && (
+            {showTimePicker ? (
               <DateTimePicker
                 testID="timePicker"
                 value={selectedDate}
@@ -285,7 +285,7 @@ const Battery = () => {
                 display="default"
                 onChange={handleTimeChange}
               />
-            )}
+            ) : null}
 
             <TouchableOpacity
               onPress={scheduleEisAnalysis}
@@ -301,7 +301,7 @@ const Battery = () => {
               </Text>{" "}
             </TouchableOpacity>
 
-            {countdown && (
+            {countdown ? (
               <View className="items-center bg-blue-100 p-4 rounded-xl mb-3">
                 <Text className="text-lg font-JakartaSemiBold text-blue-800">
                   Analysis starts in:
@@ -318,7 +318,7 @@ const Battery = () => {
                   </Text>
                 </TouchableOpacity>
               </View>
-            )}
+            ) : null}
           </View>
 
           <View className="w-full mt-2">

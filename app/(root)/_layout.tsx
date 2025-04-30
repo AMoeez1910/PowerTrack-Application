@@ -4,6 +4,7 @@ import { NotificationProvider } from "@/providers/NotificationContext";
 
 const Layout = () => {
   return (
+    // context for notification
     <NotificationProvider>
       <Stack>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />

@@ -96,13 +96,13 @@ const Information = () => {
               labelField="name"
               valueField="id"
             />
-            {selectedBattery.health && (
+            {selectedBattery.health ? (
               <View>
                 <Text className="text-xl font-JakartaBold absolute">
                   {batteryText(selectedBattery.health)}!
                 </Text>
               </View>
-            )}
+            ) : null}
           </View>
           <View className="flex">
             <CustomBatterySVG
@@ -188,7 +188,7 @@ const Information = () => {
             ))
           )}
         </View>
-        {(selectedBattery?.warns?.length ?? 0) > 0 && (
+        {(selectedBattery?.warns?.length ?? 0) > 0 ? (
           <CustomButton
             title="Fix Battery Warning Issues"
             className="mt-5"
@@ -197,7 +197,7 @@ const Information = () => {
               setModalVisible(true);
             }}
           />
-        )}
+        ) : null}
       </View>
       <ReactNativeModal
         isVisible={modalVisible}
