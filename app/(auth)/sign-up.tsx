@@ -1,11 +1,10 @@
-import { View, Text, ScrollView, Image, Alert } from "react-native";
+import { View, Text, ScrollView, Image, Alert, Modal } from "react-native";
 import React, { useState } from "react";
 import { icons, images } from "@/constants";
 import InputField from "@/components/InputField";
 import CustomButton from "@/components/CustomButton";
 import { Link, router } from "expo-router";
 import { useSignUp } from "@clerk/clerk-expo";
-import ReactNativeModal from "react-native-modal";
 import { SafeAreaView } from "react-native-safe-area-context";
 // import { fetchAPI } from "@/lib/fetch";
 
@@ -162,66 +161,72 @@ const SignUp = () => {
       </ScrollView>
 
       {/* Verification Modal */}
-      <ReactNativeModal
-        isVisible={
-          verification.state === "pending" || verification.state === "failed"
-        }
-      >
-        <View className="bg-white px-7 py-9 rounded-2xl min-h-[300px]">
-          <Text className="text-2xl font-JakartaExtraBold mb-2">
-            Verification
-          </Text>
-          <Text className="font-Jakarta mb-5">
-            We have sent a verification code to {form.email}
-          </Text>
-          <InputField
-            label="Code"
-            placeholder="123456"
-            icon={icons.lock}
-            value={verification.code}
-            keyboardType="numeric"
-            onChangeText={(text) =>
-              setVerification({ ...verification, code: text })
-            }
-            maxLength={6}
-          />
-          {verification.error && (
-            <Text className="text-center font-JakartaSemiBold text-red-500 mt-3 mx-2">
-              {verification.error}
+      <Modal transparent={true} visible={
+        verification.state === "pending" ||
+        verification.state === "failed" ||
+        verification.state === "success"
+      } animationType="slide">
+        <View className="flex-1 justify-center items-center bg-black/50">
+          <View className="bg-white px-7 py-9 rounded-2xl w-[90%] max-w-[400px]">
+            <Text className="text-2xl font-JakartaExtraBold mb-2">
+              Verification
             </Text>
-          )}
-          <CustomButton
-            className="mt-4"
-            bgVariant="success"
-            title="Verify Email"
-            onPress={onPressVerify}
-            isLoading={verificationLoading}
-            disabled={!isVerificationCodeValid}
-          />
+            <Text className="font-Jakarta mb-5">
+              We have sent a verification code to {form.email}
+            </Text>
+            <InputField
+              label="Code"
+              placeholder="123456"
+              icon={icons.lock}
+              value={verification.code}
+              keyboardType="numeric"
+              onChangeText={(text) =>
+                setVerification({ ...verification, code: text })
+              }
+              maxLength={6}
+            />
+            {verification.error && (
+              <Text className="text-center font-JakartaSemiBold text-red-500 mt-3 mx-2">
+                {verification.error}
+              </Text>
+            )}
+            <CustomButton
+              className="mt-4"
+              bgVariant="success"
+              title="Verify Email"
+              onPress={onPressVerify}
+              isLoading={verificationLoading}
+              disabled={!isVerificationCodeValid}
+            />
+          </View>
         </View>
-      </ReactNativeModal>
+      </Modal>
 
       {/* Success Modal */}
-      <ReactNativeModal
-        isVisible={showSuccessModal}
-        onBackdropPress={() => handleNavigateAfterSuccess()}
+      <Modal
+        visible={showSuccessModal}
+        animationType="slide"
+        transparent={true}
+        onRequestClose={() => handleNavigateAfterSuccess()}
       >
-        <View className="bg-white px-7 py-9 rounded-2xl min-h-[300px]">
-          <Image source={images.check} className="w-24 h-24 mx-auto my-5" />
-          <Text className="text-3xl font-JakartaBold text-center">
-            Verified
-          </Text>
-          <Text className="text-center font-JakartaSemiBold text-secondary-500 mt-3 mx-2">
-            Your account has been verified successfully.
-          </Text>
-          <CustomButton
-            className="mt-4"
-            bgVariant="secondary"
-            title="Browse Home"
-            onPress={handleNavigateAfterSuccess}
-          />
+        <View className="flex-1 justify-center items-center bg-black/50">
+          <View className="bg-white px-7 py-9 rounded-2xl w-[90%] max-w-[400px]">
+            <Image source={images.check} className="w-24 h-24 mx-auto my-5" />
+            <Text className="text-3xl font-JakartaBold text-center">
+              Verified
+            </Text>
+            <Text className="text-center font-JakartaSemiBold text-secondary-500 mt-3 mx-2">
+              Your account has been verified successfully.
+            </Text>
+            <CustomButton
+              className="mt-4"
+              bgVariant="secondary"
+              title="Browse Home"
+              onPress={handleNavigateAfterSuccess}
+            />
+          </View>
         </View>
-      </ReactNativeModal>
+      </Modal>
     </SafeAreaView>
   );
 };

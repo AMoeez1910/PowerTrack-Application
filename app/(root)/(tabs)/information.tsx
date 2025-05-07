@@ -5,6 +5,7 @@ import {
   Image,
   ActivityIndicator,
   RefreshControl,
+  Modal,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import CustomBatterySVG from "@/components/BatteryIcon";
@@ -13,7 +14,6 @@ import { carData, warningFix } from "@/lib/data";
 import { Dropdown } from "react-native-element-dropdown";
 import { Circle, Svg } from "react-native-svg";
 import CustomButton from "@/components/CustomButton";
-import ReactNativeModal from "react-native-modal";
 import { images } from "@/constants";
 import { useFetch } from "@/lib/fetch";
 
@@ -199,38 +199,55 @@ const Information = () => {
           />
         ) : null}
       </View>
-      <ReactNativeModal
-        isVisible={modalVisible}
-        onBackdropPress={() => {
+      <Modal
+        visible={modalVisible}
+        animationType="slide"
+        transparent={true}
+        onRequestClose={() => {
           setModalVisible(false);
         }}
       >
-        <ScrollView className="bg-white px-7 my-6 rounded-2xl max-h-[800px]">
-          <View className="flex justify-center items-center">
-            <Image source={images.circuit} />
-            <Text>Circuit Diagram {selectedBattery.name}</Text>
-            <View className="mt-4">
-              {selectedBattery?.warns?.map((warning, index) => (
-                <View key={index}>
-                  <Text className="text-2xl font-JakartaExtraBold mb-2">
-                    {warningFix(warning).title}:
-                  </Text>
-                  {warningFix(warning).fix.map((fix, index) => (
-                    <View key={index} className="flex flex-row items-center">
-                      <Svg height="7" width="7" viewBox="0 0 10 10">
-                        <Circle cx="5" cy="5" r="5" fill="#1F1F1F" />
-                      </Svg>
-                      <Text className="text-sm ml-2 font-Jakarta mb-2">
-                        {fix}
+        <View className="flex-1 justify-center items-center bg-black/50">
+          <View className="bg-white rounded-2xl w-[90%] max-w-[400px] max-h-[80%]">
+            <View className="flex-row justify-end p-2">
+              <Text
+                className="font-JakartaBold text-2xl p-2 h-10 w-10 text-center"
+                onPress={() => setModalVisible(false)}
+              >
+                ×
+              </Text>
+            </View>
+            <ScrollView className="px-7">
+              <View className="flex justify-center items-center">
+                <Image source={images.circuit} />
+                <Text>Circuit Diagram {selectedBattery.name}</Text>
+                <View className="mt-4">
+                  {selectedBattery?.warns?.map((warning, index) => (
+                    <View key={index}>
+                      <Text className="text-2xl font-JakartaExtraBold mb-2">
+                        {warningFix(warning).title}:
                       </Text>
+                      {warningFix(warning).fix.map((fix, index) => (
+                        <View
+                          key={index}
+                          className="flex flex-row items-center"
+                        >
+                          <Svg height="7" width="7" viewBox="0 0 10 10">
+                            <Circle cx="5" cy="5" r="5" fill="#1F1F1F" />
+                          </Svg>
+                          <Text className="text-sm ml-2 font-Jakarta mb-2">
+                            {fix}
+                          </Text>
+                        </View>
+                      ))}
                     </View>
                   ))}
                 </View>
-              ))}
-            </View>
+              </View>
+            </ScrollView>
           </View>
-        </ScrollView>
-      </ReactNativeModal>
+        </View>
+      </Modal>
     </ScrollView>
   );
 };
